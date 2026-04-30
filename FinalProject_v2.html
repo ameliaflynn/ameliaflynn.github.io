@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reveal Typography Publisher — Named 10 Red Layers</title>
+  <style>
+    :root {
+      --lens-size: 230px;
+      --lens-opacity: 0.94;
+      --essay-opacity: 0.56;
+      --policy-opacity: 0.13;
+      --essay-size: 22px;
+      --policy-size: 18px;
+      --line-height: 1.48;
+      --content-width: 980px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f6f7fb;
+      color: #111827;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 64px;
+      background: linear-gradient(90deg, #111827, #06102a);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      box-shadow: 0 8px 22px rgba(0,0,0,.15);
+    }
+
+    .topbar h1 { margin: 0; font-size: 18px; letter-spacing: .2px; }
+
+    .badge {
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      opacity: .9;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 460px;
+      gap: 18px;
+      align-items: start;
+      padding: 18px;
+    }
+
+    .stage-wrap {
+      position: relative;
+      min-height: 140vh;
+      background: white;
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 18px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.08);
+      overflow: visible;
+    }
+
+    .stage-label {
+      position: sticky;
+      top: 76px;
+      z-index: 20;
+      display: inline-block;
+      margin: 14px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(0,0,0,.08);
+      font-size: 12px;
+      font-weight: 700;
+      color: #374151;
+      box-shadow: 0 8px 18px rgba(0,0,0,.08);
+    }
+
+    .stage {
+      position: relative;
+      width: min(var(--content-width), calc(100% - 48px));
+      min-height: 1600px;
+      margin: 8px auto 80px;
+      padding: 32px;
+      background: white;
+    }
+
+    .essay-layer,
+    .policy-layer {
+      position: absolute;
+      inset: 0;
+      padding: 32px;
+      width: 100%;
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .essay-layer {
+      z-index: 1;
+      color: rgb(45, 115, 255);
+      opacity: var(--essay-opacity);
+      font-size: var(--essay-size);
+      line-height: var(--line-height);
+      font-weight: 400;
+      pointer-events: auto;
+    }
+
+    .policy-layer {
+      z-index: 2;
+      color: rgb(235, 75, 75);
+      opacity: var(--policy-opacity);
+      font-size: var(--policy-size);
+      line-height: 1.02;
+      font-weight: 400;
+      pointer-events: none;
+    }
+
+    .layer-1 { transform: translate(0, 0); }
+    .layer-2 { transform: translate(12px, 7px) rotate(.18deg); }
+    .layer-3 { transform: translate(-10px, 16px) rotate(-.3deg); }
+    .layer-4 { transform: translate(9px, -9px) rotate(.16deg); }
+    .layer-5 { transform: translate(-16px, -2px) rotate(-.2deg); }
+    .layer-6 { transform: translate(18px, 15px) rotate(.38deg); }
+    .layer-7 { transform: translate(-22px, 10px) rotate(-.48deg); }
+    .layer-8 { transform: translate(24px, -16px) rotate(.55deg); }
+    .layer-9 { transform: translate(-6px, -22px) rotate(-.12deg); }
+    .layer-10 { transform: translate(7px, 24px) rotate(.28deg); }
+
+    .essay-layer h1, .essay-layer h2, .essay-layer h3,
+    .policy-layer h1, .policy-layer h2, .policy-layer h3 {
+      margin: 0 0 .7em;
+      line-height: 1.15;
+    }
+
+    .essay-layer p, .policy-layer p { margin: 0 0 1em; }
+
+    .essay-layer a, .policy-layer a {
+      color: inherit;
+      text-decoration: underline;
+      font-weight: 700;
+    }
+
+    .essay-layer blockquote, .policy-layer blockquote {
+      margin: 1em 0;
+      padding-left: 1em;
+      border-left: 4px solid currentColor;
+    }
+
+    .policy-layer.dense {
+      column-count: 2;
+      column-gap: 18px;
+      white-space: normal;
+    }
+
+    .lens {
+      position: fixed;
+      width: var(--lens-size);
+      height: var(--lens-size);
+      left: 42vw;
+      top: 48vh;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: rgba(255, 0, 0, var(--lens-opacity));
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      z-index: 80;
+      box-shadow:
+        0 0 0 2px rgba(255,255,255,.85),
+        0 0 0 6px rgba(255,0,0,.13),
+        0 16px 48px rgba(0,0,0,.18);
+    }
+
+    .lens::after {
+      content: "";
+      position: absolute;
+      inset: -16px;
+      border-radius: inherit;
+      border: 2px dashed rgba(255,0,0,.25);
+    }
+
+    .panel {
+      position: sticky;
+      top: 82px;
+      max-height: calc(100vh - 100px);
+      overflow: auto;
+      background: rgba(255,255,255,.97);
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.1);
+    }
+
+    .panel h2 { margin: 0 0 8px; font-size: 16px; }
+
+    .help {
+      margin: 0 0 14px;
+      font-size: 12px;
+      color: #4b5563;
+      line-height: 1.45;
+    }
+
+    details {
+      border-top: 1px solid rgba(0,0,0,.08);
+      padding: 12px 0;
+    }
+
+    details:first-of-type { border-top: 0; }
+
+    summary {
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      resize: vertical;
+      border: 1px solid rgba(0,0,0,.14);
+      border-radius: 12px;
+      padding: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.4;
+      margin-top: 10px;
+    }
+
+    .control { margin: 12px 0; }
+
+    .control label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .control input[type="range"] { width: 100%; }
+
+    .layer-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      margin: 8px 0;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .layer-row span {
+      overflow-wrap: anywhere;
+      line-height: 1.25;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      background: #111827;
+      color: white;
+      padding: 9px 11px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #e8eefc;
+      color: #1f3d8f;
+    }
+
+    .note {
+      font-size: 11px;
+      color: #6b7280;
+      line-height: 1.4;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
+      .panel {
+        position: relative;
+        top: auto;
+        max-height: none;
+        order: -1;
+      }
+      .stage {
+        width: calc(100% - 24px);
+        padding: 20px;
+      }
+      .essay-layer, .policy-layer { padding: 20px; }
+      .policy-layer.dense { column-count: 1; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <h1>Reveal Typography Publisher — Named 10 Red Layers</h1>
+    <div class="badge">styled blue essay + named red masks</div>
+  </header>
+
+  <main class="layout">
+    <section class="stage-wrap">
+      <div class="stage-label">Scroll the document; move your pointer to move the red lens</div>
+      <div class="stage" id="stage">
+        <article class="essay-layer" id="essayLayer"></article>
+        <section class="policy-layer layer-1 dense" id="policy1"></section>
+        <section class="policy-layer layer-2 dense" id="policy2"></section>
+        <section class="policy-layer layer-3 dense" id="policy3"></section>
+        <section class="policy-layer layer-4 dense" id="policy4"></section>
+        <section class="policy-layer layer-5 dense" id="policy5"></section>
+        <section class="policy-layer layer-6 dense" id="policy6"></section>
+        <section class="policy-layer layer-7 dense" id="policy7"></section>
+        <section class="policy-layer layer-8 dense" id="policy8"></section>
+        <section class="policy-layer layer-9 dense" id="policy9"></section>
+        <section class="policy-layer layer-10 dense" id="policy10"></section>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <h2>Publisher controls</h2>
+      <p class="help">
+        Paste styled HTML into the blue essay or any named red layer. The red layers are named using your Meta policy/source list.
+      </p>
+
+      <details open>
+        <summary>Visual controls</summary>
+
+        <div class="control">
+          <label><span>Lens size</span><span id="lensSizeValue">230px</span></label>
+          <input id="lensSize" type="range" min="120" max="520" value="230">
+        </div>
+
+        <div class="control">
+          <label><span>Lens opacity</span><span id="lensOpacityValue">0.94</span></label>
+          <input id="lensOpacity" type="range" min="0.55" max="1" value="0.94" step="0.01">
+        </div>
+
+        <div class="control">
+          <label><span>Blue essay opacity</span><span id="essayOpacityValue">0.60</span></label>
+          <input id="essayOpacity" type="range" min="0.15" max="0.9" value="0.60" step="0.01">
+        </div>
+
+        <div class="control">
+          <label><span>Red mask opacity</span><span id="policyOpacityValue">0.28</span></label>
+          <input id="policyOpacity" type="range" min="0.02" max="0.40" value="0.28" step="0.01">
+        </div>
+
+        <div class="control">
+          <label><span>Blue essay font size</span><span id="essaySizeValue">16px</span></label>
+          <input id="essaySize" type="range" min="12" max="30" value="16">
+        </div>
+
+        <div class="control">
+          <label><span>Red mask font size</span><span id="policySizeValue">16px</span></label>
+          <input id="policySize" type="range" min="12" max="30" value="16">
+        </div>
+
+        <div class="layer-row">
+          <span>Show red lens</span>
+          <input id="showLens" type="checkbox" checked>
+        </div>
+
+        <div class="layer-row">
+          <span>Dense mask mode</span>
+          <input id="denseMode" type="checkbox" >
+        </div>
+
+        <div class="buttons">
+          <button id="applyAll">Apply all text</button>
+          <button id="shuffle" class="secondary">Shuffle red offsets</button>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Toggle red layers</summary>
+        <div id="layerToggles"></div>
+        <div class="buttons">
+          <button id="allOn">All on</button>
+          <button id="allOff" class="secondary">All off</button>
+        </div>
+      </details>
+
+      <h2>Text Inputs</h2>
+
+      <details>
+        <summary>Essay (blue)</summary>
+        <textarea id="essayInput"></textarea>
+        <p class="note">Use HTML like &lt;p&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;a href=""&gt;, &lt;h2&gt;, &lt;ul&gt;.</p>
+      </details>
+
+      <details><summary>Supplemental Meta Platforms Technologies Terms of Service</summary><textarea id="redInput1"></textarea></details>
+      <details><summary>Supplemental Meta Platforms Technologies Privacy Policy</summary><textarea id="redInput2"></textarea></details>
+      <details><summary>Supplemental Facebook View Privacy Policy</summary><textarea id="redInput3"></textarea></details>
+      <details><summary>Supplemental Facebook View Terms of Service</summary><textarea id="redInput4"></textarea></details>
+      <details><summary>United States Regional Privacy Notice</summary><textarea id="redInput5"></textarea></details>
+      <details><summary>Health and Safety Information</summary><textarea id="redInput6"></textarea></details>
+      <details><summary>Voice Controls Privacy Notice</summary><textarea id="redInput7"></textarea></details>
+      <details><summary>Wrist Input Privacy Notice</summary><textarea id="redInput8"></textarea></details>
+      <details><summary>Meta View Third Party Notices</summary><textarea id="redInput9"></textarea></details>
+      <details><summary>AI Glasses Creator Affiliate Program Terms and Conditions</summary><textarea id="redInput10"></textarea></details>
+    </aside>
+  </main>
+
+  <div class="lens" id="lens"></div>
+
+  <script>
+    const LAYER_COUNT = 10;
+    const layerNames = ["Supplemental Meta Platforms Technologies Terms of Service", "Supplemental Meta Platforms Technologies Privacy Policy", "Supplemental Facebook View Privacy Policy", "Supplemental Facebook View Terms of Service", "United States Regional Privacy Notice", "Health and Safety Information", "Voice Controls Privacy Notice", "Wrist Input Privacy Notice", "Meta View Third Party Notices", "AI Glasses Creator Affiliate Program Terms and Conditions"];
+
+    const sampleEssay = `<h2>The Hidden Essay</h2>
+<p>This <strong>blue essay layer</strong> is real styled HTML. You can use <em>italics</em>, <strong>bold</strong>, paragraph breaks, headings, lists, blockquotes, and <a href="https://example.com" target="_blank">hyperlinks</a>.</p>
+<p>The reveal effect works by placing multiple semi-transparent red policy layers above this essay. Outside the lens, the red policy text competes with the blue text. Inside the lens, the red layer is visually suppressed and the blue essay gains contrast.</p>
+<blockquote>A reveal lens turns reading into an active gesture: the page is not simply displayed, but discovered.</blockquote>
+<p>Paste your final essay here. The document scrolls naturally, and the red lens remains fixed above the viewport while the page moves underneath it.</p>`;
+
+ const sampleRed=[
+  `<p>Supplemental Meta Platforms Technologies Terms of Service
+Last updated: May 12, 2025
+
+These Supplemental Terms of Service supplement the Meta Terms of Service and apply to you if you use a Meta account to access Meta Platforms Technologies Products.
+
+Your use of certain Meta Platforms Technologies Products (as defined below) is governed by both the Meta Terms of Service and these Supplemental Meta Platforms Technologies Terms (these “Supplemental Terms”), which together form an agreement between you and Meta Platforms, Inc. (“Meta” or “we” or “us” or “our”). If you are a parent or guardian of a child ages 10 to 12 (or 13 depending on your region) and you create a Meta account on their behalf, these Supplemental Terms of Service apply to their use of the Meta account. References to “you” in these Supplemental Terms also apply to them and their use of the account you created for them.
+
+If there is any conflict between these Supplemental Terms and the Meta Terms of Service, these Supplemental Terms will govern. Nothing in these Supplemental Terms limits any of our rights under the Meta Terms of Service or any additional terms that they reference.
+
+The Supplemental Meta Platforms Technologies Privacy Policy supplements the Meta Privacy Policy, which together explain how we collect, use, and share information when you use Meta Platforms Technologies Products. If you are a parent or guardian of a child between the ages of 10 and 12 (or 13 depending on your region) and wish to create a Meta account for your child, please review the Parent Privacy Disclosure that describes how Meta collects, uses, and discloses your child’s personal information. The Meta Privacy Policy does not apply to the processing of your child’s personal information. You can also go to your settings at any time to review the privacy choices you have about how we use your data.
+
+1. MPT Products. Meta offers a variety of hardware and software products and services related to or in connection with those products as part of Meta Platforms Technologies. The hardware, services, features, apps, technologies, and software that are subject to these terms include the Meta VR Products and other Meta Platform Technologies products listed here, which may be updated from time to time (“MPT Products”).
+
+1.1. Accounts. We want our platform to be as open and inclusive as possible, but we also want it to be safe, secure, and in accordance with the law. So, we need you to agree to a few requirements before you can create an account to use our MPT Products:
+
+1.1.a. You must be at least 13 years of age (or 14 depending on your region) to create one or more accounts supported by a MPT Product, such as a Meta account. You may create a Meta account on behalf of your child ages 10 to 12 (or 13 depending on their region). When your child turns 13 (or 14 depending on their region), they will have 30 days to start managing their Meta account or they will be blocked from using their device.. Meta accounts for children ages 10 to 12 (or 13 depending on the region) may not be supported on all MPT Products, including Meta Wearable Products.
+
+1.1.b. You cannot create a Meta account if you are a convicted sex offender, if we have previously disabled your account for violations of the Meta Terms of Service, these Supplemental Terms, or other terms or policies that apply to your use of MPT Products, or if you are prohibited from receiving our products, services, or software under applicable laws.
+
+1.1.c. You may use the same Meta account to access different MPT Products, or you may create multiple different Meta accounts. However, except between you and your child ages 10 to 12 (or 13 depending on your region) for whom you have created an account, you may not share passwords or transfer your account to anyone else (without our permission).
+
+1.1.d. You must provide us with accurate and up to date information (including registration information), which may include providing your or your child’s personal data. Also, you may not impersonate someone you aren’t.
+
+1.2. Meta Company Products. We may make certain Meta Company Products available for use on MPT Products. You may need to add your Meta account and other account types (such as a Facebook or Instagram account) to the same Accounts Center in order to access certain features or services offered by Meta Company Products (for example, you may need to add your Meta account to the same Accounts Center as your Facebook account in order to share content from a MPT Product on Facebook). If you choose to use these Meta Company Products, your use of them is subject to the relevant terms and conditions, including minimum age requirements, for those Meta Company Products (including relevant data policies).
+
+1.3. Ads and Sponsored Content. Certain MPT Products may show you ads and other commercial and sponsored content that we think may be relevant to you and your interests. As stated in the Meta Terms of Service, we don’t sell your personal data to advertisers, and we don’t share information that directly identifies you (such as your name, email address or other contact information) with advertisers unless you give us specific permission. Learn more about how Meta ads work here and about your ad settings and preferences here.
+
+2. Your Commitments to Meta and Our Community
+
+2.1. Your responsibility for your use of MPT Products. You may only use MPT Products for personal non-commercial purposes unless otherwise expressly permitted in these Supplemental Terms or authorized by us in writing. Except as expressly permitted by us, you may not copy, modify, prepare directive works, distribute, sell, lease, publicly display, publicly perform, transmit, stream, broadcast, hack, emulate, or otherwise exploit any part of our services and software. Unless we are prohibited from restricting you under applicable law, you also may not reverse engineer any of the MPT Products or try to derive any of the software used in the MPT Products. You are also responsible for complying with all applicable laws when using MPT Products, including providing any notice to or obtaining any consents from other individuals who you interact with on your MPT Products as may be required under video recording, audio recording, biometric data, or other privacy or data protection laws. You are responsible for using your MPT Products in a safe, lawful, and respectful manner. For example, you may not tamper with the MPT Products, or otherwise obscure or modify any features that are intended to signal to others that the product is recording.
+
+2.2. Commercial Use of MPT Products. If you use MPT Products for commercial, business, or other non-personal purposes (“commercial use”), you agree that any such use is also subject to the Commercial Terms for each MPT Product (identified in Section 5.12(b) below) unless otherwise agreed by Meta. If you engage in a commercial use, you represent and warrant that you have legal authority to bind your organization to these Supplemental Terms, the applicable Commercial Terms, and the Meta Terms of Service with respect to the full extent of any such commercial use.
+
+2.3. Your responsibility for other users of your MPT Product. Each person, including you, who uses your MPT Product is referred to in these Supplemental Terms as a user of such products. You are responsible for the activities of all users of your MPT Products, and for their consent to and compliance with these Supplemental Terms. We encourage you to monitor others who use your MPT Products.
+
+2.4. Your responsibility for your child’s use of a Meta account to access MPT Products. You are responsible for determining that your child is ready to use MPT Products, consistent with the Health and Safety Warnings (see 5.5.d). If your child is below 10 years of age or otherwise not ready to use MPT Products as determined by you, you must not create an account for them. You are responsible for the activities of your child when they use a Meta account to access MPT Products, and for their compliance with these Supplemental Terms. You are responsible for supervising your child’s access to and use of MPT Products. You are responsible for ensuring your child understands these Supplemental Terms as well as other Terms and Policies that may apply, such as the Code of Conduct for Virtual Experiences, and ensuring they understand how to behave and interact with others when accessing MPT Products.
+
+3. The Permissions You Give Us
+
+3.1. Permission to use content you create and share. The license granted under “The permissions you give us” of the Meta Terms of Service includes content that you create, share, post, or upload on or in connection with MPT Products (consistent with applicable privacy settings). This means, for example, that if you create or upload videos using MPT Products, you give us permission to store, copy, and share them with others (again, consistent with your privacy settings), such as Meta Company Products, or service providers that support those products and services. This license is solely for the purposes of providing and improving Meta Company Products and services (including the MPT Products) as described in the Meta Terms of Service, these Supplemental Terms, and consistent with applicable privacy settings and privacy or data protection laws. The scope and substance of the license are not intended to exceed the extent permitted by applicable laws and will end when your content is deleted from our systems.
+
+3.2. Permissions to update software you use or download. The “Permission to update software you use or download” of the Meta Terms of Service includes permission to download and install updates to software embedded on your device, including during device setup. If you use a Third-Party Service (see Section 4.2 below), you understand and agree that we may install upgrades, updates, and additional features for the Third-Party Service. Some Third-Party Services may constitute core features of a MPT Product device and may be pre-installed or installed by us with no additional notice to you upon initial setup of a MPT Product device or after a MPT Product device is already in use.
+
+3.3. Permission to use your name, profile picture, and information about your actions with ads and sponsored or commercial content. You give us permission to use your profile name, profile picture, and information about actions you have taken in MPT Products (for example, apps you use) next to or in connection with ads, offers, and other sponsored or commercial content that we display in MPT Products without any compensation to you. Additionally, if you choose to connect your Meta account with other Meta Company Products accounts (such as your Facebook or Instagram accounts), you also give us permission to display your profile information and information about actions you have taken in MPT Products across Meta Company Products. Ads and content like this can be seen only by people who have your permission to see the actions you've taken in MPT Products consistent with your privacy settings.
+
+4. What You Can Share and Do on MPT Products
+
+4.1. Permission to use. If your MPT Product includes software applications, content, or virtual items other than Third-Party Services (“Software and Content”) that have been enabled for your use, we hereby grant you a personal, non-exclusive, revocable, non-transferable, non-sublicensable, limited right and license to access, use, and download (as permitted by the functionality of the MPT Products) that Software and Content on MPT Products devices you own or control, solely for personal non-commercial purposes (except as expressly authorized by Meta in writing), conditioned on your compliance with these Supplemental Terms. Any unauthorized use of the MPT Products, including the Software and Content, is strictly prohibited and will cause the license granted in these Supplemental Terms to terminate automatically. No licenses or rights are granted to you by implication or otherwise, except for the licenses and rights expressly granted to you herein or in any other applicable terms. The Software and Content are the property of Meta, its affiliates, or its licensors, and are only licensed, not sold to you. Meta also requires that you use only the then-current version of the Software and Content.
+
+4.2. Third-Party Services. MPT Products can be used to access software, applications, services, content, and virtual items (including, but not limited to, third-party digital content, additional or enhanced functionality, or media content purchased through MPT Products) provided by third parties (“Third-Party Services”). In some cases, Meta or its affiliates may distribute Third-Party Services to you on behalf of the third party.
+
+4.2.a. Third-Party Terms. Your use of a Third-Party Service may be subject to additional terms, conditions, fees, and policies imposed by the third party (together, “Third-Party Terms”). Meta is not a party to these Third-Party Terms. However, in the event that Third-Party Terms conflict with the provisions of these Supplemental Terms, these Supplemental Terms will govern. You are responsible for complying with any applicable Third-Party Terms, and we recommend that you review any applicable Third-Party Terms before using Third-Party Services. To the maximum extent permitted by applicable law, we have no obligations or liability for (i) your access to or use of any Third-Party Services, (ii) any information that you provide or authorize us to provide to any Third-Party Services, or (iii) such third party’s collection, use, or disclosure of such information; however, depending on the applicable jurisdiction, such third party may have legal obligations to you with respect to such data, and we encourage you to review the third party’s privacy policies to understand how they may collect, use, and disclose data. If you have connected to a Third-Party Service on a MPT Product, you may remain connected using saved credentials unless you take action to discontinue access to that service (such as by changing the applicable account settings for the relevant Third-Party Service).
+
+4.2.b. Default End User License. If you are not presented with an end user license agreement when you acquire Third-Party Services, the following license terms apply to your use of such Third-Party Services: (a) the third party providing the Third-Party Services (and not Meta or its affiliates) is the licensor of such Third-Party Services; (b) such third party grants you a limited, non-transferable license to access and use the Third-Party Services only for your personal and non-commercial purposes; and (c) you may not modify, decompile or disassemble the Third-Party Services in whole or in part, or create any derivative works from or sublicense any rights in or to the Third-Party Services, unless otherwise expressly authorized by the third party or as permitted under applicable law notwithstanding these restrictions. Meta and its affiliates are not parties to the license agreement between you and the provider of such Third-Party Services or other Third-Party Terms.
+
+4.2.c. Discontinuation of Third-Party Services. Third-Party Services may require access to data about Meta users and Meta services, which access is subject to agreements between Third-Party Service providers and Meta. We may disable this access for a Third-Party Service if the Third-Party Service provider breaches these agreements, our policies, or applicable law, or if the agreements are otherwise terminated. This may adversely affect your use of such Third-Party Services, including by making such Third-Party Services partially or fully inoperable. To the maximum extent permitted by applicable law, we will have no liability to you for removing or disabling access to data and services by a third party for these reasons. This means, without limitation, that Meta will not provide you with any refunds for such Third-Party Services in these cases. Any rights, including refund claims, which you may have under your agreements with third parties remain unaffected.
+
+4.3. Prohibitions. In addition to what is stated in the Meta Terms of Service, you may not use MPT Products to do or share anything that violates these Supplemental Terms, or other terms and policies that apply to your use of MPT Products, including but not limited to those described in Sections 5.11 and 5.12 below. We encourage you to report content or conduct that you believe violates your rights or our terms and policies. We may remove, delete or restrict access to content that violates such terms and policies, including content that infringes intellectual property rights (such as by infringing another’s copyright or trademark, or distributing or selling counterfeit or pirated goods). If you believe that anything on or available through the MPT Products infringes upon any intellectual property rights you own or control, you may submit a notification of such infringement with our Designated Agent as stated below:
+
+Meta Designated Agent
+Meta Platforms, Inc.
+1 Meta Way
+Menlo Park, CA 94025, US
+Phone: +1 (650) 543 4800
+Email address: ip@oculus.com
+
+4.4. Objectionable Content. We may display age, comfort, and content ratings for digital content (including ads) that are based on information provided to us by the developers of such content, and which are not verified by Meta, unless expressly mentioned. We cannot guarantee that digital content ratings will always be accurate, nor can we promise that you will not find some material harmful, inappropriate, offensive, indecent, or objectionable, including material that may be found through accessing third-party links or other Third-Party Services. You understand that you may be exposed to content from a variety of sources when using MPT Products and acknowledge that content may be inaccurate, inappropriate, offensive, indecent, or otherwise objectionable. You agree that, to the maximum extent permitted by applicable law, Meta will not be responsible or liable for content posted by you, other users of MPT Products, or a third party.
+
+4.5. Age Restrictions. You may only access certain digital content if you are of or above the age displayed to you when you order the digital content. If we determine that you did not comply with these age requirements, we may disable your access to the digital content and we will not refund the amounts paid for the digital content.
+
+5. Additional Provisions
+
+5.1. Functionality may change or be limited. We work constantly to improve MPT Products and respond to changing needs of our community. As part of this continual improvement, we may introduce new features or services, impose limits on, change, suspend, disable, remove, replace, update, upgrade, roll back, or restrict access to features, services, software, content or any part of MPT Products (including Meta Products or Meta Company Products). Where legally required, we will provide you with reasonable advance notice of such modifications. If a feature, service, software or content is no longer available, or if a technical error occurs, information, data, or content created or provided by you in connection with such feature, service, software or content may be deleted or become inaccessible, and you should not exclusively rely on any feature, service, software or content to store or preserve such information, data or content. In addition, certain features, services, software or content may be disabled or made available in modified form based on your age or location. We may offer free trials or other limited versions of the MPT Products so that you can preview these products before purchase. These versions may have limited features, restrict the permitted time of use and contain other limitations. The features, functionality, or availability of a Third-Party Service may change or be discontinued, including if the developer of such Third-Party Service violates our terms or policies, or in accordance with the Terms or the applicable Third-Party Terms.
+
+5.2. Account suspension or termination. In addition to what is stated under “Account suspension or termination” in the Meta Terms of Service, which applies to MPT Products and the Meta account, your access to or use of MPT Products may be restricted, suspended, or disabled, and you may lose access to part or all of the services offered by Meta or third parties through MPT Products (including your accounts, and any of your information, data, or content associated with such services), if, acting reasonably: (i) we determine that you have clearly, seriously, or repeatedly breached these Supplemental Terms, or other terms and policies that apply to your access to or use of MPT Products or Third-Party Services; or (ii) your access to, or use of, MPT Products creates a health and safety risk. We may also disable or delete your account if after registration your account is not confirmed, your account is unused and remains inactive for an extended period of time, or if we detect someone may have used it without your permission and we are unable to confirm your ownership of the account, or where we are required to do so under applicable law. To the maximum extent permitted by applicable law, Meta and its affiliates assume no liability for such loss of access and use and will have no obligations related to such loss. If you discontinue your use of MPT Products, or we disable your access to or use of MPT Products, these Supplemental Terms shall terminate as an agreement between you and us with respect to those MPT Products, but certain sections will survive termination as provided in Section 5.9 below.
+
+5.3. Updates to these Supplemental Terms. These Supplemental Terms may be updated from time to time to accurately reflect our services and practices, to promote a safe and secure experience on the MPT Products, and/or comply with applicable law. We will only make changes to these Supplemental Terms if the provisions are no longer appropriate or if they are incomplete, and only if the changes are reasonable and take due account of interests. Unless the changes are required by law, we will notify you (for example, by email or through MPT Products) at least 30 days before we make changes to these Supplemental Terms or any Commercial Terms (if the changes are applicable to the MPT Products used by you), and give you an opportunity to review the updated terms before they go into effect. We hope that you will continue using MPT Products, but if you do not agree to our updated Supplemental Terms, you must cease use of MPT Products. Your continued use of MPT Products after the effective date of the updated Supplemental Terms constitutes your acceptance of those terms.
+
+5.4. Third-Party Fees and Costs. You are responsible for the fees, costs, and other charges, such as internet usage or utilities fees, associated with use of MPT Products, as well as fees, costs, and other charges associated with Third-Party Services.
+
+5.5. Disclaimers; Limitations of Liability; Indemnification.
+
+5.5.a. For the avoidance of doubt, the provisions under “Limits on Liability” of the Meta Terms of Service also apply to MPT Products (except for the limited warranties provided for below). THE LAWS OF SOME JURISDICTIONS DO NOT ALLOW THE DISCLAIMER OF IMPLIED WARRANTIES OR CERTAIN TYPES OF DAMAGES, SO SOME OR ALL OF THE DISCLAIMERS AND LIMITATIONS OF LIABILITY IN THE META TERMS OF SERVICE MAY NOT APPLY TO YOU.
+
+5.5.b. Unless a separate limited warranty is provided, certain hardware products of the MPT Products are covered by the Limited Warranty offered by Meta Platforms Technologies, LLC. Nothing in these Supplemental Terms is intended to either abridge or expand the scope of those limited warranties.
+
+5.5.c. Certain MPT Products may have communication or calling capabilities. However, there are important differences between such MPT Products and a mobile or fixed-line telephone service. MPT Products do not provide access to emergency services or emergency service providers (including the police, fire departments, or hospitals), or otherwise connect to public safety answering points. You should ensure you can contact your relevant emergency service providers through a mobile telephone, fixed-line telephone, or other service.
+
+5.5.d. THERE ARE IMPORTANT HEALTH AND SAFETY WARNINGS, INFORMATION, AND INSTRUCTIONS (“HEALTH AND SAFETY WARNINGS”) THAT YOU MUST READ BEFORE USING MPT PRODUCTS OR ALLOWING YOUR CHILD TO USE MPT PRODUCTS, AVAILABLE HERE. THESE INCLUDE WARNINGS, INFORMATION, AND INSTRUCTIONS THAT A PARENT OR GUARDIAN MUST REVIEW AND CONSIDER BEFORE DETERMINING THAT THEIR CHILD IS READY FOR MPT PRODUCTS AND SETTING UP AN ACCOUNT ON THEIR BEHALF. WARNING: FAILURE TO FOLLOW THE HEALTH AND SAFETY WARNINGS AND INSTRUCTIONS MAY RESULT IN DAMAGE TO MPT PRODUCTS OR ACCESSORIES, AND MAY INCREASE THE RISK OF PERSONAL INJURY, PROPERTY DAMAGE, DISCOMFORT OR OTHER POTENTIAL HAZARDS. BY USING MPT PRODUCTS, YOU REPRESENT AND WARRANT THAT YOU HAVE REVIEWED THESE WARNINGS AND INSTRUCTIONS AND ENSURE THAT ALL USERS OF YOUR MPT PRODUCTS READ AND UNDERSTAND THE HEALTH AND SAFETY WARNINGS AND INSTRUCTIONS (AND WILL REVIEW ANY UPDATES THERETO), AND WILL ACT IN ACCORDANCE WITH SUCH WARNINGS AND INSTRUCTIONS.
+
+5.5.e. To the maximum extent permitted by applicable law, you agree to defend (at our request), indemnify and hold harmless Meta and its affiliates from and against all claims, liabilities, damages, losses, and expenses (including, but not limited to, reasonable attorneys’ fees and costs) arising out of or in any way connected with (i) your actual or alleged breach of these Supplemental Terms or any other applicable terms, policies, warnings or instructions provided by Meta or a third party in relation to the MPT Products; (ii) your violation of any applicable law or any rights of any third party; (iii) any content you provide, upload, or transmit while using MPT Products, or (iv) any access to or use of MPT Products by any third party to whom you have made available MPT Products access or use, unless applicable law requires otherwise. In the event that you provide Meta’s defense to such a claim, you agree that Meta (a) shall be consulted regarding, and shall have the right to approve (at our sole discretion), defense strategy, any appeal, and any settlement of the claim, (b) shall have the right to select defense counsel, and (c) may further participate in the defense of the claim with counsel of our own choice at our own expense.
+
+5.6. Dispute Resolution.
+
+In the event that you have any dispute with us that is connected to these Supplemental Terms or personal use of MPT Products, you may contact us and we will endeavor to resolve this dispute.
+
+If you are a consumer, or where required by applicable law, the laws of the country in which you reside will apply to any claim, cause of action, or dispute you have against us that arises out of or relates to these Supplemental Terms or MPT Products, and you may resolve your claim in any competent court in that country that has jurisdiction over the claim. In all other cases, you agree that the claim must be resolved exclusively in the US District Court for the Northern District of California or a state court located in San Mateo County, California. You also agree that you submit to the personal jurisdiction of either of these courts for the purpose of litigating any such claim, and that the laws of the State of California will govern these Supplemental Terms and any claim, without regard to conflict of law provisions.
+
+5.7 Severability and Waiver. If any portion of these Supplemental Terms is found to be unenforceable, the unenforceable portion will be deemed amended to the minimum extent necessary to render it enforceable, and if it can’t be made enforceable, then it will be severed and the remaining portion will remain in full force and effect. If we fail to enforce any of the Supplemental Terms, it will not be considered a waiver. Any amendment to or waiver of these Terms must be made in writing and signed by us.
+
+5.8 Transfer and Trade Compliance. MPT Products are only intended for use in the countries listed on the “Supported Countries” page of the corresponding MPT Product. Certain MPT Products’ functionality and services may not be accessible outside of, and may vary among and within, the Supported Countries. You will comply with all applicable U.S. and non-U.S. export controls, import controls and trade sanctions laws (“Trade Laws”). You will not use or download, allow others to use or download, or otherwise transact with / within MPT Products if you or they are located in a country or region subject to comprehensive U.S. trade sanctions, if you or they are listed on any U.S. or EU restricted parties list, or for any purpose prohibited by Trade Laws. You will not disguise your location through IP proxying or other methods to circumvent this restriction. You will not, and will not allow others to, directly or indirectly, export, re-export, provide, resell, transfer or otherwise dispose of MPT Products: (a) to any individual, entity, or country or region prohibited by Trade Laws; (b) to anyone on U.S. or EU government restricted parties lists; or (c) for any purpose prohibited by Trade Laws, including, but not limited to, nuclear, chemical or biological weapons, or missile technology applications. You will not, and will not allow others to, use, distribute or transfer, MPT Products in any manner that violates applicable law, including all applicable Trade Laws of the Supported Countries and any other applicable governmental authority. MPT Products may not be resold, transferred or otherwise disposed of in a country subject to comprehensive U.S. trade sanctions or to a person or organization sanctioned by the U.S. and EU government authorities.
+
+5.9 Termination. These Supplemental Terms are effective until terminated in accordance with the terms and conditions herein, and will terminate when the Meta Terms of Service between you and us are terminated. Upon termination, the provisions in Sections 3 and 5.5 - 5.11 of these Supplemental Terms will survive.
+
+5.10. Government Rights. The MPT Products, including all related software, technical data and documentation, are “Commercially available off-the-shelf (COTS) items” as defined in Section 2.101 of Title 48 of the U.S. Code of Federal Regulations. We provide the MPT Products for public sector end use, including U.S. Government end use, with the same rights as all other end users pursuant to these Supplemental Terms. If a public sector entity, including a U.S. Government entity, has a need for any additional rights, it must negotiate directly with Meta to determine if the parties can negotiate an acceptable amendment to these Supplemental Terms that must be included in any applicable contract or agreement.
+
+5.11. Product-Specific Terms. The following additional terms apply to the applicable MPT Product (Meta VR Products or Worlds), as noted below:
+
+5.11.a. For purposes of Section 3 of these Supplemental Terms, you additionally agree that Meta, its affiliates, and other users of Worlds may interact with, supplement, manipulate, and modify (in whole or in part) any content you have rights in, upload to, or create in Worlds. To the fullest extent permitted by law, you waive and agree to waive, or agree not to exercise, all rights known or referred to as “moral rights,” “artist’s rights,” “droit moral,” or other similar rights in and to any such content.
+
+5.11.b. Notwithstanding Section 3.1 of these Supplemental Terms, you acknowledge and agree that: (a) content that you create in, modify in, or upload to Worlds in accordance with these Supplemental Terms may continue to exist on our systems and in Worlds even after you have deleted your account, without prejudice to your privacy rights as provided in the Meta Privacy Policy; (b) when you delete your account, others you have invited to build your worlds, if any, may assume management of them under certain circumstances; and (c) the license you grant to us to use your content under these Supplemental Terms, along with consents given in relation to that content, will not expire and will continue even after you delete your account, to the maximum extent permitted by applicable law.
+
+5.11.c. When you use Worlds, the last few minutes of your and other users’ most recent audio, video, and other interactions will be recorded in case you want to report anything you've encountered. These recordings may be stored on our servers. We do not review these recordings unless you submit a report. If you don’t submit a report, the recordings will be deleted on a rolling basis.
+
+If you submit a report, we use the attached recordings to investigate and resolve the report, and to help train our systems to combat harmful conduct, after which time the recordings are deleted. In some cases, we may need to retain the recordings for longer, where it is necessary in order to comply with applicable law.
+
+In addition, we may use safety specialists to investigate abuse reports in real time. If safety specialists are called to your location within Worlds, they can see, hear, and record your interactions in real time. You may not be able to detect when a safety specialist is present in your location within Worlds.
+
+5.11.d. You may not create currencies, stocks, banks, stock exchanges, or similar financial instruments in Worlds. Meta may choose to make available to users copyrighted sound recordings and the musical works embodied in the sound recordings (“Licensed Music”) in connection with features of Worlds. If Meta makes Licensed Music available to you, Meta grants you permission to use Licensed Music solely for creating content in Worlds. This permission is in the form of a non-exclusive, non-sublicensable, personal, limited, revocable, non-transferable license to (i) synchronize the Licensed Music into content in Worlds during the period of time that the Licensed Music is made available through Worlds, and (ii) play, listen, and interact with content containing Licensed Music solely through Worlds. If you modify, edit, sample, or remix any of the Licensed Music within content in Worlds, any new or derivative works created will also be Licensed Music and Meta will retain the rights to those works. To the extent permitted by applicable law, you hereby assign and shall assign your rights in those new or derivative works of Licensed Music to Meta, and agree not to make any claim based on moral rights, but you may use those new or derivative works of Licensed Music subject to the limited license above. For clarity, this license does not permit you to sell, license, sub-license, or rent Licensed Music or any new derivative works you or others create from the Licensed Music.
+
+5.12. Other Terms and Policies that may apply.
+
+5.12.a. Meta Horizon Store Terms: These terms apply to any order, download, or purchase made through the MPT Products (including free software and content).
+
+5.12.b. MPT Commercial Terms: These terms apply to use of MPT Products for any commercial, business, or other non-personal purpose.
+
+5.12.c. Code of Conduct for Virtual Experiences and Platform Abuse Policy: These policies apply to you if you access or use MPT Products.
+
+5.12.d. Health and Safety Warnings: These warnings, information, and instructions apply to you if you access or use MPT Products.
+
+5.12.e. Meta Avatars Terms of Service: These terms apply to your use of Meta Avatars, Avatar Tools, Meta Avatar Stores and Avatar Items as defined therein.
+
+5.12.f. If you use any MPT Product pursuant to a product testing agreement, beta testing agreement, or similar agreement (a “Product Testing Agreement”), in the event of a conflict between such Product Testing Agreement and these Supplemental Terms, the Product Testing Agreement shall govern to the extent of the conflict.
+
+5.12.g. If you use any MPT Products in your capacity as a developer of software or content for use on the MPT Products pursuant to a developer agreement, in the event of a conflict between such developer agreement and these Supplemental Terms, the developer agreement shall govern to the extent of the conflict.</p>`,
+  `<p>Supplemental Meta Platforms Technologies Privacy Policy
+We’ve updated our Privacy Policy. The updates go into effect on 5 March 2026. Read the updated policy below. Read the previous policy .
+Effective March 5, 2026
+
+This Supplemental Privacy Policy supplements the Meta Privacy Policy and applies to your and your child's use of a Meta account and access to Meta Platforms Technologies Products.
+
+If you are a parent or guardian of a child between the ages of 10 and 12 (age may vary by region) and wish to create a Meta account for your child, please review the Parent Privacy Disclosure that describes how Meta collects, uses and discloses your child's personal information. After you've created a Meta account for your child, we will collect, use and disclose your child's information much like any other Meta account. This Supplemental Privacy Policy applies in full to both adults and children. To the extent that there are privacy practices specific to your child's Meta account, those differences are outlined in the Children's privacy highlight at the top of each relevant section of this Supplemental Privacy Policy. Note that the Meta Privacy Policy does not apply to the processing of your child's personal information.
+
+Meta offers a variety of hardware and software products and services related to or in connection with those products as part of Meta Platforms Technologies. The hardware, services, features, apps, technologies and software products described in the Supplemental Meta Platforms Technologies Terms of Service, and subject to this policy, include Meta VR Products, Meta Wearable Products and other Meta Platforms Technologies Products listed here, any of which may be updated from time to time (collectively, "MPT Products").
+
+We encourage you to read our Meta Privacy Policy and this Supplemental Meta Platforms Technologies Privacy Policy ("Supplemental Privacy Policy") because we want you to understand what information we collect and how we use and share it.
+
+In the Meta Privacy Policy, we describe the information that we process to support Meta Products. This Supplemental Privacy Policy adds to the Meta Privacy Policy by explaining the additional information that we process to support MPT Products and by providing more details about how we process that information. Below, you will find an overview of the ways in which we collect, use and share information.
+
+Meta Accounts
+I. What information do we collect for Meta accounts?
+
+Children's privacy highlights
+
+In addition to the information detailed in the Meta Privacy Policy under "What information do we collect?", we collect the following information when you create a Meta account:
+
+Name
+Contact information
+Password
+Date of birth
+Username
+
+II. How do we use your information for Meta accounts?
+
+Children's privacy highlights
+
+When you use your Meta account to access MPT Products, we process your information as described in the Meta Privacy Policy under "How do we use your information?" and as described below for each MPT Product.
+
+If you choose to add your Meta account to the same Accounts Centre as your other Meta Product accounts, please see here for details on how we use and share your information across accounts.
+
+III. How do we share information for Meta accounts?
+
+When you use your Meta account to access MPT Products, we share information we collect as described in the Meta Privacy Policy under "How is your information shared on Meta Products or with integrated partners?", "How do we share information with Partners, vendors, service providers and third parties?" and "How do we respond to legal requests, comply with applicable law and prevent harm?". We also use and share your information as described below with respect to each MPT Product.
+
+If your Meta account is managed by an organisation (i.e. a "Managed Meta Account"), we share with that organisation certain information about your account, to promote safety, integrity and security; to comply with applicable laws and regulations; and in accordance with Meta's terms and policies, including the applicable Acceptable Use Policy. This may include information such as the status of your account, the approximate location of your managed headset, and information about applications you install and how you use them.
+
+Meta VR Products
+I. What information do we collect for Meta VR Products?
+
+Children's privacy highlights
+
+In addition to the information described in the Meta Privacy Policy under "What information do we collect?", we collect the following categories of information depending on your use of Meta VR Products:
+
+Meta Horizon profile: If your use of a Meta VR Product requires you to create a Meta Horizon Profile, then we collect information related to your profile, including your:
+
+Profile name
+Profile picture
+Username
+Avatar
+List of followers
+Interactions with games and apps
+
+We also collect information regarding when you are online and when you interact with a virtual reality app.
+
+Physical characteristics and movements : We collect information about or related to:
+
+The position and orientation of your headset and controllers to determine body pose and make your avatar's movements more realistic.
+
+The position of your headset, the speed of your controller movement and changes in your orientation (such as when you duck while playing a game) to deliver an immersive and realistic virtual experience.
+
+Your audio data, when your microphone preferences are enabled, to animate your avatar's lip and face movement.
+
+Hand and body tracking. For hand and body tracking in Meta VR Products, we process abstracted hand and body data to allow you to switch between hands and controllers to interact with your surroundings and have a more seamless or immersive experience. Hand and body tracking also helps make your avatar's movements look more realistic. Raw image data of your hands and body is processed on your device.
+
+We also collect and retain certain data about your interactions with hand and body tracking (such as tracking quality and the amount of time it takes to detect your hands and body), to provide the feature and ensure that it works properly. Learn more in our Hand and Body Privacy Notice.
+
+Eye tracking. For eye tracking in Meta Quest Pro, we process your abstracted gaze data to improve your image quality, help you interact with virtual content in an app and to animate your avatar's eye and facial movements. Raw image data of your eyes is processed on your device.
+
+We also collect and retain certain data about your interactions with eye tracking (such as tracking quality and the amount of time it takes to detect your eyes) to provide the feature and ensure that it works properly. Learn more in our Eye Tracking Privacy Notice.
+
+Natural facial expressions. For natural facial expressions in Meta Quest Pro, we process your abstracted facial expressions data to make your avatar's expressions look more natural. Raw image data of your face is processed on your device.
+
+We also collect and retain certain data about your interactions with natural facial expressions (such as how much time it takes to detect expressions) to provide the feature and ensure that it works properly. Learn more in our Natural Facial Expressions Privacy Notice.
+
+Fit adjustment. For fit adjustment in Meta Quest Pro, we process abstracted fit adjustment data to check whether your headset is aligned optimally and provide headset adjustment tips. Raw image data of your eyes and lower face are stored on your device.
+
+We also collect and retain certain data about your interactions with fit adjustment (such as whether a user completed the setup process or how long the setup process took) to provide the feature and ensure that it works properly. Learn more in our Fit Adjustment Privacy Notice.
+
+Meta VR Product activity: We collect information about your Meta VR Product activity, such as your activity in virtual reality (including your use of Meta Quest devices and apps), including:
+
+Payment credentials that you provide to us
+The virtual reality events that you attend
+The purchases that you make
+Apps you download
+The time, frequency and duration of your activities on our Meta VR Products. For example, we collect information about your Meta Quest browser usage, such as interactions with recommended WebVR experiences, which browser features you use and other statistics.
+
+Content: We collect content that you create on our Meta VR Products, such as a picture that you post or an object that you build. We also collect information about this content, such as the date and time that you created it.
+
+Gameplay and statistics: We collect information about your gameplay activity and statistics, such as:
+
+How successfully you play a game
+Actions in the game
+Associated metadata created when you use Meta VR Products
+
+Environmental information and dimensions: We collect information about your physical environment and its dimensions when you use a Meta VR Product. For example, we may collect information about the size of walls, surfaces and objects in your room and the distances between them and your headset to offer experiences that blend your virtual and real-world environments. Learn more.
+
+Camera and audio information: When cameras and microphones are on in Meta VR Products, we collect:
+
+Camera information, including photo and video. For example, the sensors on Meta Quest process raw images of your surroundings and enable the headset to both process your movement and help orient you in your designated virtual reality areas. Raw images of your surroundings are processed on your device.
+When you choose to turn on your microphone in Worlds, we may collect recorded audio.
+Video or audio content that you create and information about this content, such as the date and time that you created it.
+
+Additionally, when you use Worlds, the last few minutes of your and other users' most recent audio, video and other interactions in Worlds are recorded in case you want to report anything that you've encountered. These recordings may be stored on our servers. We do not review these recordings unless you submit a report. These recordings enable you to report abuse, combat harmful conduct, and protect and support our community. Other users in close proximity to you in Worlds may submit recordings of the same event. If you don't submit a report, the recordings are deleted on a rolling basis. If you submit a report, we'll use the attached recordings to investigate and fully resolve the report, and to help train our systems to better combat harmful behaviour, after which time, the recordings will be deleted. In some cases, we may need to retain the recordings for longer, where it is necessary in order to comply with applicable law.
+
+Voice Interactions: Voice interactions, including conversations with AI-powered features, for example Meta AI and generative AI powered non-player characters (NPCs), are the commands and dictations you say, including if you mistakenly invoke our voice services, as well as any background sound that happens when you use those services. When you use our voice services, we process:
+
+Audio recordings
+Transcripts
+Related data about your voice conversations with Meta AI and other AI-powered features such as the hardware version of your device and the length of the audio related to your conversation
+
+We process this information to respond to your request, provide the requested service to you and, depending on your settings, improve our voice services. Learn more in our Voice Dictation Privacy Notice and our Meta AI on Meta Quest Privacy Notice.
+
+Please note that third-party services may offer their own app voice experiences. When you use those services, information collected by these third-party services is subject to their own terms and privacy policies, not this policy. You can learn more about how we collect and use information from other features that you interact with on Meta Quest in our Privacy FAQ.
+
+Device information: We collect technical system information about the devices that you use and information about how you use Meta VR Products, including:
+
+Performance and device attributes
+System logs and settings
+Success or failure of specific functions
+Third-party service usage
+Crash reports
+
+When a Meta VR Product experiences a crash, a log about the crash is sent to Meta. This log includes, among other things, the date and time of the crash, your user ID, device ID, IP address and small fragments of information from any camera and microphone in use at the time of the crash. These crash logs are only retained and used to diagnose and fix problems with Meta VR Products or other apps and services used on Meta VR Products.
+
+You may choose to share additional data with Meta about how you use your device to help us personalise your experiences and improve Meta VR Products. Learn more.
+
+Information from partners and third parties: When a third-party service is used on Meta VR Products, we collect information about the use of the service, including:
+
+How often and for how long it is used
+Crash log information when it crashes
+An authorisation token if it requires a login
+
+We also receive information about you from partners and third parties, including:
+
+Third-party apps
+Developers
+Other online content providers
+Marketing partners
+Platforms not controlled by Meta on which you may access or use Meta VR Products without a Meta Account or Horizon Profile. If you are accessing a Meta VR Product on a platform not controlled by Meta, that platform’s terms and policies also apply.
+
+For example, in Meta Quest, we receive information from developers about your achievements in their app and about what features you can use in their app. To learn about how a third-party service processes or shares your information, please refer to their terms and privacy policies.
+
+II. How do we use your information for Meta VR Products?
+
+Children's privacy highlights
+
+
+
+We use the information that we collect when you use Meta VR Products for the purposes described in the Meta Privacy Policy under "How do we use your information", including (i) to provide measurement, analytics and other promotional services (including ads and commercial content); (ii) to promote safety, security and integrity; (iii) to communicate with you; and (iv) to research and innovate for social good.
+
+We also use the information that we collect when you use Meta VR Products in the following ways:
+
+To power social features and personalise and promote content: We use your profile name, picture and information about your Meta VR Product activity (including your use of Meta Quest devices and apps):
+
+To send personalised commercial content
+To provide personalised content suggestions
+To display ads, offers and sponsored content in Meta VR Products.
+
+For example, depending on your privacy settings, we use information about your use of Meta Quest devices and apps to help you connect with your followers, or to encourage your followers to join you in using Meta VR Products:
+
+To recommend products, content and experiences to others
+To help tailor a user's experience by helping them understand which communities or content may be most relevant to them.
+
+Depending on your privacy settings, we also use information from Meta VR Products to provide user-to-user communications and other social services across the Meta Products. This includes identifying and connecting you with your followers or people you recently interacted with in an experience, through Meta VR Products. If your Meta account is a Managed Meta Account, those privacy settings may be set or changed by your organisation.
+
+To provide and improve our Meta VR Products: We use information that we collect, including device performance and reliability data, to help improve and develop Meta VR Products. By analysing device performance and reliability, we can improve the hardware and software that powers your experiences with Meta VR Products. We also use your device performance and reliability information to offer and improve aspects of our services, such as voice services, hand tracking, eye tracking, Natural Facial Expressions, and fit adjustment.
+
+If you use our voice services on your Meta VR Product, depending on your settings, we analyse and review your voice conversations with Meta AI and other AI-powered features using human review and machine processes to improve, troubleshoot and train our speech recognition systems.
+When you use the hand and body tracking feature in Meta Quest devices, we collect technical information, such as tracking quality, the amount of time it takes to detect your hands and body, and the number of gestures you make to improve and troubleshoot this feature.
+When you use the eye tracking feature in Meta Quest Pro, we collect certain data about your interactions with the feature, such as tracking quality and the amount of time that it takes to detect your eyes.
+When you use the natural facial expressions feature in Meta Quest Pro, we collect certain data about your interactions with the feature, such as how the headset fit affects the quality of detected facial movements and how much time it takes to detect expressions.
+When you use the fit adjustment feature in Meta Quest Pro, we collect and retain certain data about your interactions with the feature, such as whether the setup process has been completed or, how long the setup process took.
+
+III. How is your information shared with others for Meta VR Products?
+
+Children's privacy highlights
+
+In addition to the sharing of information described in the Meta Privacy Policy, we share the information that we collect when you use Meta VR Products in the following ways:
+
+Information that you make public
+Your Meta Horizon Profile information will be public and visible to people on and off the Meta VR Products. This includes your profile name, username, picture and avatar.
+
+For example, if you enter a public virtual space in Meta Quest, others can see your avatar just as they would see you in a real-world public space. This means that your avatar may appear in pictures, recordings or live streams that users around you take and share. Information that you post to public areas on the Meta VR Products, such as a forum, blog or other community tool, will also be visible to people on and off of Meta VR Products, along with certain information associated with your public posts, such as the time of your post.
+
+Third-party services and applications
+You can interact with applications and third-party services, including content, games, apps and other experiences, through many Meta VR Products. If you use services from a third party, we share information about you with the third-party service so that it can provide you with the service that you've requested.
+
+For example, we share your Horizon Profile information with apps that you use so you can appear as your Horizon Profile in those apps:
+
+Avatar
+Username
+Profile name and picture
+List of people that you follow and those who follow you so that you can interact with them in those apps
+Your interactions with the app or third-party service such as how long you've interacted with their content
+Any other information that you choose to share with the app or third-party service
+
+If you use third-party services on Meta VR Products, the third-party services may collect information from you directly through the experiences that they provide.
+
+However, you can also choose to share information with third-party services from Meta VR Products, for example:
+
+If you enable eye tracking or Natural Facial Expressions in Meta Quest Pro, apps can access your abstracted gaze data or abstracted facial expressions data. Please note that information you share with these (or other) third-party services will be subject to their own terms and policies, not this policy.
+Depending on your ad preferences, third party apps that are permitted to run ads may access your advertising ID - a unique device identifier used to show you more relevant ads. Learn More.
+
+Information that you provide when playing online
+When you use online multi-user apps in Meta Quest, your activity and other information that you provide are visible to all within the app, including:
+
+Avatar
+In-app profile information
+In-app activity
+
+This information (including your voice or audio) can be collected, copied, recorded and live-streamed by other users, shared on and off Meta VR Products and submitted to us to report abuse, combat harmful conduct, and protect and support our community. Learn more. Please consider carefully who you interact with and how you conduct yourself, and make sure that your available privacy settings reflect your preferences.
+
+Third-party access to voice conversations with Meta AI
+Depending on your settings, we share recordings, transcripts and related data about your voice conversations with Meta AI with vendors and service providers who assist us in improving, troubleshooting and training our speech recognition systems.
+
+If your Meta account is managed by an organisation (i.e. a "Managed Meta Account"), we also share with that organisation certain information about your account, to promote safety, integrity and security; to comply with applicable laws and regulations; and in accordance with Meta's terms and policies, including the applicable Acceptable Use Policy. This may include information such as the status of your account, the approximate location of your managed headset and information about applications you install and how you use them. Please review your organisation's policies or contact your organisation's administrator to learn more about the information shared with your organisation and the settings and access controls established by your organisation.
+
+Meta Wearable Products
+Children's privacy highlights
+
+If you communicate and share content from your Meta Wearable Products using other Meta Company Products, information relating to your use of the Meta Company Product will be subject to their applicable terms and policies.
+
+I. What information do we collect for Meta Wearable Products?
+
+In addition to the information described in the Meta Privacy Policy under "What information do we collect?", and in this Supplemental Privacy Policy under "What information do we collect for Meta Accounts?", we may process certain categories of information when you use a Meta Wearable Product. The specific data we collect and how it is used depends on the Meta Wearable Product and how you use it. For more detailed information about each category, please refer to the sections below:
+
+Photo, video and/or audio information: You can use the AI Glasses to take photos and video recordings with audio (together "Media"). This Media is captured on your AI Glasses and sent to your App. We will collect your Media when you turn on cloud processing on your AI Glasses, interact with the Meta AI service on your AI Glasses, or upload your Media to certain services provided by Meta (i.e. Facebook or Instagram). You can change your choices about cloud processing of your Media at any time in Settings.
+
+If available, you can use your AI Glasses to live stream. Video and audio content from your live-stream will be processed through the Meta Company Product you live stream from (i.e. Facebook or Instagram). The video and audio content from your live stream (if available for your device) will not be stored on your AI Glasses after you finish a live streaming session or in the App. Your use of a Meta Company Product to live stream will be subject to the terms and policies of that Meta Company Product.
+
+If available, you can use your AI Glasses to caption or translate live conversations into a different language. The audio recordings and the transcripts generated when you use the feature are processed on your AI Glasses and in the Meta AI App. The audio recordings are deleted after you are done using the feature.
+
+Metadata. We collect metadata, such as the date and time you created Media, whether it's a photo or a video recording, and technical information about your camera or other AI Glasses sensors related to content.
+
+Location-related information: When you choose to share your mobile device's location with the Meta AI App by turning on the Location services device setting, we collect location-related information that you allow us to receive. This includes things like the location where you used your AI Glasses to take photos and video recordings for the geotagging feature or reminders, or when you use the find your device or navigation features. Location-related information includes your general location or precise location that you choose and control through your mobile device settings. You can change your preferences about collecting location-related information at any time in your mobile device settings.
+
+When you interact with the Meta AI service on your AI Glasses (if available for your device), the Meta AI service may process Media in connection with requests to understand what you are looking at, which may include understanding your general location, to provide you with a more relevant and useful service.
+
+Wrist Device Sensors: Wrist Devices include sensors to enable functionality, such as electromyography (EMG) sensors for processing electrical muscle signals (EMG signals). For more information about EMG signal processing for wrist-based input, see the Wrist Input Privacy Notice.
+
+Device information: In addition to the information described in the Meta Privacy Policy under the “App, browser and device” section, we collect and use "Essential Data" about your AI Glasses and Wrist Devices when you use them. You can also choose to share "Additional Data" about your use of your AI Glasses and Wrist Devices as explained below. Essential and Additional Data can be associated with other information, such as your User ID, Device ID and information about your device model and operating system.
+
+Essential Data is information needed to ensure the AI Glasses and Wrist Devices work as expected, meet user expectations, and provide the service outlined in the Terms of Service. For example, we collect information to perform certain actions on the AI Glasses or Wrist Devices and to see whether they are working correctly, like if the bluetooth is functioning or the device sensors and your product interactions are working as intended. In addition, similar to other devices, if the AI Glasses or Wrist Devices crash or malfunction, a log is sent to Meta that includes information from the time of the crash event, such as the date and time of the crash and how you were using your devices immediately before the crash event. These crash logs are only retained and used to diagnose and fix problems with your devices. Essential Data is automatically shared with Meta.
+
+Additional Data is information we collect when you use your AI Glasses and Wrist Devices that help improve and personalise your user experience and develop and improve Meta Products. Additional Data includes information such as analytics about AI Glasses and Wrist Devices usage to help us develop new features and products to provide a better user experience. Meta will use Additional Data for these purposes if you choose to share Additional Data with Meta during your initial setup, and you can change your choice at any time in Settings. Learn more about how you can control sharing Additional Data from your AI Glasses or Wrist Devices with Meta.
+
+Third-party services and apps: When a third-party service is used on the Meta Wearable Products, such as a music player or third-party app, depending on how the service works, we may collect information such as: how often and for how long you use it, crash log information if it crashes and an authorisation token if required for login. Third-party services may share information with us when their service is used on the Meta Wearable Products. To learn about how third-party services process your information, please refer to their terms and privacy policies.
+
+Meta may provide you the ability to connect to third-party apps to provide you with health and fitness services on the Meta AI App and your Meta Wearable Products. If you choose to connect third-party apps, Meta may receive health and wellness information, fitness information, location information, and other information that you choose to share from the third party apps. Some of this information may be considered sensitive under applicable privacy and data protection laws. Learn more about use of these services, including the choices you have and how to link and unlink third-party apps to the Meta AI App.
+
+II. How do we use your information for Meta Wearable Products?
+
+In addition to the purposes described in the Meta Privacy Policy under "How do we use your information?", including (i) to provide measurement, analytics and other promotional services (including ads and commercial content); (ii) to promote safety, security and integrity; (iii) to communicate with you; and (iv) to research and innovate for social good, we use information we collect in the following ways:
+
+Provide our services. This includes providing services and features of the AI Glasses and Wrist Devices, helping to make them and the Meta AI App work properly, and maintaining safety, security and integrity. For example, we collect information to see whether the Meta AI App and the devices are working correctly, like whether the AI Glasses and Meta AI App are pairing properly, or the Wrist Device is being worn properly and the sensors are working as expected to provide the device features and experiences. We also collect information to make sure that it's you, like when you sign in to the Meta AI App with your Meta account or perform certain actions on the AI Glasses and Meta AI App, such as to send a message or start a call. If you choose to turn on cloud processing on your AI Glasses, your photos and videos will be sent from the Meta AI App to Meta servers to support additional photo and video features. When you use the Meta AI service on your AI Glasses (if available for your device), we use your information, like Media and audio recordings of your voice to provide the service.
+
+Improve Meta Products. When you use the Meta AI service on your AI Glasses (if available for your device), your information, like Media and audio recordings of your voice, may be used to improve Meta products, including the Meta AI service and the models that power it. We also use Additional Data (subject to the choice you make) to improve and develop Meta Products, including tailoring your experience with your AI Glasses. For example, we use this information to create new products and features. Additional Data is used by Meta for these purposes only if you choose to opt in. You can choose to opt in for us to use Additional Data for product improvement purposes during your initial setup, and you can change your choice at any time in Settings. Learn more about how you can control information that you share with Meta.
+
+III. How is your information shared with others for Meta Wearable Products?
+
+We share information we collect as described in the Meta Privacy Policy under "How is your information shared on Meta Products or with integrated partners?" and "How do we share information with Partners, vendors, service providers and third parties?" and as described in the following sections of this Supplemental Privacy Policy. We may also access, preserve, use and share your information as described in the Meta Privacy Policy under "How do we respond to legal requests, comply with applicable law and prevent harm?".
+
+When you use the Meta AI service on your AI Glasses (if available for your device), we may share your information, like the prompt you use when you ask Meta AI a question, or a photo you take to ask Meta AI a question, with third parties as described in Meta’s AI Terms. You can view a list of these third parties and links to their privacy policies by visiting our Privacy Centre.
+
+When you use a third-party service on the AI Glasses, like a music player, we may share information with the third-party service to complete your requests, like when you ask your AI Glasses to play a song or a meditation. We may also share information related to how and when you use the third-party service, and an authorisation token if it requires a login.
+
+We also exchange certain information with Luxottica Group S.p.A. ("Luxottica") about the AI Glasses that they manufacture and distribute. We exchange this information with Luxottica to fulfil our contractual obligations to Luxottica and to manage your customer service requests. For example, Luxottica shares with us your name, email address and information if you contact them about an issue you are experiencing. Then, we share with Luxottica information to help resolve the issue, such as steps to resolve a problem with your Meta account. We also share with Luxottica information about these certain AI Glasses purchased through their own channels, such as when they are activated, and we exchange aggregated information and insights with Luxottica relating to marketing, usage, sales and post-sale activities. Luxottica does not collect any information directly from your use of any AI Glasses and/or the Meta AI App such as your photos and/or videos. Any information you provide to Luxottica in connection with your purchase of any AI Glasses is subject to Luxottica's terms and policies.
+
+IV. How do we process information when you use our voice services for Meta Wearable Products?
+
+This Section applies when you use our voice services, like voice controls or the Meta AI service on AI Glasses. The voice services available to you depend on the version of your AI Glasses and your location.
+
+When you use our voice services, we record and process information about your voice interactions to respond to your requests. Voice interactions are things that you say when using our voice services, including when voice services are invoked by mistake, as well as any background sound that can be heard once voice services have been enabled. Voice interactions include both things you say when you use a wake-word (for example, if your AI Glasses are playing music, and you say “Hey Meta, pause the music”) and also when you don’t use a wake-word for certain interactions (saying “pause music”). The information we process for our voice services includes audio recordings and transcripts of your voice interactions, as well as data related to your voice interactions, such as the hardware version of your AI Glasses and how long your interaction took.
+
+If you use voice controls on Ray-Ban Stories, we may store and process information about your voice interactions to improve our voice controls and other Meta products, depending on your preferences in Settings. This information can help our voice controls to better understand and respond more accurately to a wide range of speech patterns and phrases over time. You can manage voice storage to improve our voice controls and other Meta products in your Settings. When voice storage and processing for product improvement is turned on, we use machine learning and trained reviewers to process information about your voice interactions to improve, troubleshoot and train our voice controls and other Meta products. We share that information with third-party vendors and service providers to improve our products. Even with voice recording storage off, you can still use voice controls. You can access and delete stored voice information in your Settings.
+
+The Meta AI service on AI Glasses (if available for your device) stores text transcripts and audio recordings of your voice interactions by default to help improve Meta’s products. This includes improving the Meta AI service (and related technologies), and training and improving our speech technologies. For example, audio recordings are used to help Meta’s products better understand and respond more accurately to a wide range of speech patterns and phrases over time. We use machine learning and trained reviewers to process this data to improve, troubleshoot, and train our products. We share that information with third party vendors and service providers to improve our products. You can access and delete recordings and related transcripts in the Meta AI App.
+
+You can learn more about our voice services, including further details about what information we collect when you use our voice services and your choices over how we process that information, in the AI Glasses Voice Privacy Notice and the Voice Services FAQ.
+
+Cookies and similar technologies
+We receive information collected on MPT Products, including cookies, pixels, advertising IDs, local storage and similar technologies. Learn more about how we use these technologies on our websites and mobile apps in Meta's Privacy Policy, Meta's Cookie Policy and our Privacy FAQ.
+
+How can you exercise your rights?
+Under applicable privacy laws, you may have the right to access, rectify and erase your information, as well as object to or restrict certain processing of your information that we collect through MPT Products. You may also have the right to withhold or withdraw consent. As a parent or guardian of your child's Meta account, you can exercise these rights as well. If you wish to enquire about or exercise any of these rights, as applicable, please visit the Privacy Centre.
+
+How to contact Meta
+You can learn more about how privacy works for MPT Products in each MPT Product, as well as the Meta Privacy Policy. You can also find out more about how privacy works and how to exercise your ability to access, rectify, port and erase the information collected through MPT Products in the Privacy Centre.
+
+If you have questions about this Supplemental Privacy Policy, or have questions, complaints or requests regarding your information, you can contact us as described below.
+
+You can contact us online or by post at:
+
+Meta Platforms, Inc.
+ATTN: Privacy Operations
+1 Meta Way
+Menlo Park, CA 94025, US</p>`,
+  `<p>Supplemental Facebook View Privacy Policy
+This Privacy Policy applies to you if you use a Facebook account to access Facebook View. You now need a Meta account to continue to access Facebook View, and the Supplemental Meta Platform Technologies Privacy Policy applies to your use of a Meta account on Facebook View.
+Effective January 1, 2023
+
+Facebook View (as defined below) is a wearable experience that enables you to interact with your environment in new and innovative ways. Facebook View companion app (the "App") pairs with Ray-Ban Stories glasses manufactured and distributed by Luxottica (the "Glasses"). Meta software powers the smart features on the Glasses. This policy applies to "Facebook View", which means, together, the App, the software on the Glasses, and their related services and features. Facebook View is a Meta Product (as defined in the Meta Privacy Policy) and is available to users who have an active and valid Facebook account.
+
+The Meta Privacy Policy describes the information we process to support Meta Products, including Facebook View. This Supplemental Facebook View Data Policy supplements the Meta Privacy Policy by explaining the additional information we collect, use, and share when you use Facebook View, including when you use our voice services (see section 4 below), and how we work with Luxottica (see section 5 below).
+
+You can choose to communicate and share content on Facebook View using other Meta Company Products. If you choose to do so, information relating to your use of the Meta Company Product will be processed in accordance with the terms of service, privacy policy, and other terms applicable to that Meta Company Product.
+
+1. What information do we collect?
+In addition to the information described in the Meta Privacy Policy under "What information do we collect?", we collect the following categories of information when you use Facebook View:
+
+Photo and Video Information: When the cameras and microphones are activated on the Glasses, we collect photo and video information, including the following:
+
+Photos and Video Recordings. You can use the Glasses to take photographs and video recordings (with audio). You can then edit this content in the App. This content is stored on your Glasses, until it is uploaded to your App. We also collect metadata in or about the content, such as the date and time you created the content.
+
+Metadata. We collect metadata in or about the content, such as the date and time you created the content, the type of content (i.e., a photo or a video recording) and technical information about your camera or other Glasses sensors related to the content.
+
+Device Information: In addition to the information we collect through or from cookies, pixels, and similar technologies described in the Meta Privacy Policy and Cookies Policy, we collect "Essential Data", and, if you agree, "Additional Data", about your Glasses and the App when you use Facebook View as described further below. Both Essential and Additional Data have certain information associated with them when they are collected, such as your User ID and Device ID and information about your device model and operating system.
+
+Essential Data is information needed to help keep the Glasses and the App reliable, secure, and operating normally. For example, we collect information to capture the success or failure of specific functions (including when you are pairing the Glasses with the App) and to authenticate you (including when you sign into the App with your Facebook account). In addition, similar to other devices or apps, when Facebook View experiences a crash or malfunctions a log is sent to Facebook that includes information in use at the time of the crash event, such as the date and time of the crash and what features of the App you used immediately prior to the crash event.
+
+Additional Data is information about how you use the Glasses and the App, which we use primarily to improve the App and Glasses, as described below. For example, we collect information such as the number of photos and videos captured, the time spent taking videos, the method you use to share photos and videos, and the average length of videos captured. If you choose to share Additional Data, it may be combined with the Essential Data. You can choose to share Additional Data during your initial setup, or change your choice at any time in Settings. Learn more about Additional Data and your choice to share it with Meta.
+
+Third-party Services: When a third-party service is used on the Glasses, depending on how the service is implemented, we may collect information about the use of the service, such as how often and for how long it is used, crash log information if it crashes, and an authorization token if it requires a log-in. Third-party services may share information with us when their service is used on the Glasses. To learn about how third-party services process your information, please refer to their terms and privacy policies.
+
+2. How do we use your information?
+In addition to the uses of information described in the Meta Privacy Policy under "How do we use your information?", we use information we collect when you use Facebook View in the following ways:
+
+Provide our services. We use Essential Data in accordance with the Meta Privacy Policy, including to keep the Glasses paired with the App, install software updates for security and stability of the Glasses and the App, and ensure that you can interact with the Glasses and the App in a reliable manner.
+
+Improve your experience. In addition to keeping Facebook View reliable and secure, we use Additional Data (subject to the choice you make) to improve and personalize your experience with Meta Products. For example, we use this data to evaluate the usefulness of the features we are developing, which enables us to decide what to build in order to offer features people find value in. Learn more about Additional Data and your choice to share it with Meta.
+
+3. How do we share your information?
+We share information we collect when you use Facebook View as described in the Meta Privacy Policy under "How is your information shared on Meta Products or with Integrated Partners?" and "How do we share information Partners, vendors, service providers and third parties?" and as described in the following sections. We may also access, preserve, use and share your information as described in the Meta Privacy Policy under "How do we respond to legal requests, comply with applicable law and prevent harm?"
+
+4. How do we process information when you use our voice services?
+This Section applies when our voice services, like voice assistant, are available on Facebook View and you enable it.
+
+When you use our voice services, audio recordings and transcripts of your voice interactions, as well as data related to your voice interactions (such as the hardware version of your Glasses and length of the audio related to your interaction) are processed to respond to your requests. Voice interactions are things you say when using our voice services, including when voice services are mistakenly invoked, as well as any background sound that can be heard once voice services are enabled.
+
+Depending on your preferences in Settings, we may also store and process information about your voice interactions to help our voice services such as by helping our voice services to better understand and respond more accurately to a wide rang of speech patterns and phrases over time. You can manage voice storage to improve our voice services in your Settings. You can also access and delete stored voice information in your Settings or in Your Facebook Information. When voice storage for product improvement is enabled, we use machine learning and trained reviewers to process information about your voice interactions to improve, troubleshoot, and train our voice services, and we share that information with third party vendors and service providers for product improvement.
+
+You can learn more about our voice services, including further details about what information we collect when you use our voice services and your choices over how we process that information, in the Voice Services FAQ.
+
+5. How do Meta and Luxottica work together?
+Luxottica Group S.p.A. (“Luxottica”) is the manufacturer and distributor of the Glasses and any information you provide to Luxottica in connection with your purchase of the Glasses is subject to Luxottica’s terms and policies. We exchange information with Luxottica to manage your customer service requests; for example, Luxottica shares with us your name, email address and information about the issue you are experiencing, and we share with Luxottica information to help resolve the issue, such as steps to resolve a problem with your Facebook account. We also exchange aggregated information and insights with Luxottica relating to marketing, usage, sales, and post-sale activities. Luxottica does not collect information directly from your use of the Glasses and the App.
+
+6. Privacy Notice for United States residents
+You can learn more about the consumer privacy rights that may be available to you by reviewing the United States Regional Privacy Notice.
+
+7. How to contact Meta?
+If you have any questions or complaints relating to the Meta Privacy Policy or this Supplemental Facebook View Privacy Policy, or wish to find out more about how to exercise your ability to access, rectify, port and erase the information collected through Facebook View, please refer to your Facebook Settings or you can contact us online.</p>`,
+  `<p>Supplemental Facebook View Terms of Service
+These Terms of Service apply to you if you use a Facebook account to access Facebook View. You now need a Meta account to continue to access Facebook View, and the Supplemental Meta Platforms Technologies Terms of Service applies to your use of a Meta account on Facebook View.
+Effective Date: August 19, 2022
+
+Meta Platforms, Inc. ("Meta" or "we" or "us" or "our") allows you to interact with your environment in new and innovative ways through smart glasses (the “Glasses”) and a companion mobile app (the “App”) to provide an array of services and features. Your use of the software on the Glasses, the App, and their related services and features (together, “Facebook View”) is governed by both the Meta Terms of Service (available at facebook.com/terms/) and these Supplemental Facebook View Terms of Service (these “Facebook View Terms,” and together with the Meta Terms of Service, the “Terms”), which together form an agreement between you and Meta. The term “Meta Products” as used in our terms and policies includes Facebook View. By using Facebook View, you agree to the Terms.
+
+Our Supplemental Facebook View Privacy Policy (available at www.meta.com/legal/ray-ban-stories/facebook-view-privacy-policy/) supplements the Meta Privacy Policy (located at facebook.com/policy/), which together explain how we collect, use, and share information when you use Facebook View.
+
+Facebook View is intended solely for users who are 13 or older. Any registration for, or use of, Facebook View by anyone under the age of 13 is unauthorized, unlicensed and in violation of these Facebook View Terms. You certify that you are of the legal age of majority in the jurisdiction in which you reside or, if you are between the ages of 13 and the legal age of majority, that you are using Facebook View with the supervision of your parent or legal guardian who agrees to be bound by the Terms, and that you have reviewed the Terms with your parent or guardian so that you both understand all of your rights and obligations.
+
+ARBITRATION NOTICE: YOU AGREE THAT DISPUTES ARISING OUT OF OR RELATED TO THESE FACEBOOK VIEW TERMS OR YOUR USE OF FACEBOOK VIEW WILL BE RESOLVED BY BINDING, INDIVIDUAL ARBITRATION AND YOU WAIVE YOUR RIGHTS TO A JURY TRIAL AND TO PARTICIPATE IN A CLASS ACTION LAWSUIT OR CLASS-WIDE ARBITRATION, AS FURTHER STATED BELOW. WE EXPLAIN SOME EXCEPTIONS AND HOW YOU CAN OPT OUT OF ARBITRATION BELOW.
+
+Your Commitments to Meta and Our Community
+
+Your responsibility for your use of Facebook View. You are responsible for complying with all applicable laws when using Facebook View, and for providing any notice or obtaining any consents, as required under video recording, audio recording, biometric data, or other privacy, data protection, or other applicable laws, from other individuals who use your Facebook View or interact with you while you are using Facebook View. You are also responsible for using Facebook View in a safe, lawful, and respectful manner. You may not tamper with the Glasses, or otherwise obscure or modify any of the features on the Glasses that signal to others that the Glasses are recording (including the external-facing LED light). Facebook View is intended for purely personal or household use. You may only use Facebook View for personal non-commercial purposes subject to the Terms and any other terms made available by us relating to Facebook View. Except to the extent such restriction is prohibited under applicable law, you will not disassemble, decompile, reverse engineer, decrypt, or attempt to derive any code or extract software from Facebook View. Except to the extent expressly permitted by us, you will not prepare derivative works based upon, distribute, license, sell, rent, transfer, publicly display, publicly perform, transmit, stream, broadcast or otherwise exploit Facebook View or any software, content, or services made available on or through Facebook View.
+
+Your responsibility for other users of your Facebook View. Each person, including you, who uses any portion of your Facebook View is referred to in these Facebook View Terms as a user of such Facebook View. You are responsible for the activities of all users of your Facebook View, and for their compliance with the Terms.
+
+
+The Permissions You Give Us
+
+Permission to use content you create and share. We need certain permissions from you to provide Facebook View. For the avoidance of doubt, the license granted in Section 3.C.1 of the Meta Terms of Service includes content that you share, post, or upload on or in connection with Facebook View (consistent with applicable settings). This means, for example, that if you share, post, or upload videos using Facebook View, you give us permission to store, copy, and share them with other Meta Company Products or service providers that support those Meta Company Products and services. This license is solely for the purposes of providing and improving Meta Company Products (including Facebook View), including as described in Section 1 of the Meta Terms of Service and in these Facebook View Terms and will end when your content is deleted from our systems (as described in more detail in Section 3.C.1 of the Meta Terms of Service).
+
+Permission to update software you use or download. As stated in Section 3.C.3 of the Meta Terms of Service, if you download or use our software, you give us permission to download and install updates to the software where available. For clarity, this right includes permission to download and install updates to software embedded on your Glasses, including during setup.
+
+
+Additional Provisions
+
+Content and Software License. Except as otherwise agreed upon, if we enable the use of software, content or other materials owned or licensed by us in Facebook View or otherwise ("Software and Content"), we hereby grant you a limited, nonexclusive, non-sublicensable license to use the Software and Content solely for personal and noncommercial purposes, solely on the hardware for which it was intended, and conditioned on your compliance with the Terms. You will not use, copy, adapt, modify, translate, decompile, reverse engineer, disassemble, decrypt, attempt to derive the source code of, prepare derivative works based upon, distribute, license, sell, rent, transfer, publicly display, publicly perform, transmit, stream, broadcast or otherwise exploit the Software and Content, except as expressly permitted by us or as permitted under applicable law. Any unauthorized use of the Software and Content and Facebook View is strictly prohibited and will terminate the license granted in the Terms. No licenses or rights are granted to you by implication or otherwise, except for the licenses and rights expressly granted to you.
+
+Functionality may change or be limited. To access and use certain features of Facebook View, a Facebook account is required, eligibility for which is stated in Section 3.A of the Meta Terms of Service. Facebook View’s functionality, performance, or both may change over time. We may introduce new features, impose limits on, suspend, eliminate, change, or update certain existing features or any part of Facebook View, or restrict access to parts or all of any Facebook View products or services. We may offer limited versions of Facebook View. These versions may have limited features, restrict the permitted time of use and contain other limitations. If a feature, service, software, or content is no longer available, information, data, or content created or provided by you in connection with such feature, service, software, or content may be deleted or become inaccessible, and you should not exclusively rely on any feature, service, software or content to store or preserve such information, data or content.
+
+Account suspension or termination. In addition to what is stated in Section 4.B of the Meta Terms of Service, your access to or use of Facebook View may be suspended, disabled, or terminated and you may lose access to, or use of part or all of, the services offered by Meta or third parties through Facebook View (including any of your information, data, or content associated with such services), if: (1) we determine, in our discretion, that you have clearly, seriously, or repeatedly breached the Terms, Community Standards, or other terms and policies that apply to your use of Facebook View; (2) we believe your access to, or use of, Facebook View creates a health and safety risk; or (3) Meta disables or deletes your Facebook account. Furthermore, we may suspend, disable or terminate your access to or use of Facebook View if you repeatedly infringe other people's intellectual property rights or if we are required to do so for legal reasons. Meta and its affiliates assume no liability for such loss of access and use and will have no obligations related to such loss. If you terminate or we suspend, disable, or terminate your access to or use of Facebook View, these Facebook View Terms shall terminate as an agreement between you and us, but certain sections will survive termination as provided in Section 3(11) below.
+
+Updates to these Facebook View Terms. These Facebook View Terms may be updated from time to time to accurately reflect our services and practices, to promote a safe and secure experience on our Meta Products and services, and/or to comply with applicable law. Unless otherwise required by law, we will notify you before we make changes to these Facebook View Terms and give you an opportunity to review the updated Facebook View Terms before they go into effect. We hope that you will continue using Facebook View, but if you do not agree to our updated Facebook View Terms, you must cease use of Facebook View. Your continued use of Facebook View after the effective date of the updated Facebook View Terms constitutes your acceptance of those terms.
+
+Third-Party Fees and Costs. You are responsible for the fees, costs, and other charges, such as internet usage or utilities fees, associated with the use of Facebook View.
+
+DISCLAIMERS; LIMITATIONS OF LIABILITY; INDEMNIFICATION.
+
+We work hard to provide the best products and services we can and to specify clear guidelines for everyone who uses them. Facebook View, however, is provided "as is," and we make no representations or guarantees that it always will be safe, secure, or error-free, failsafe, or that it will function without disruptions, delays, or imperfections. We also do not control or direct what people and others do or say, and we are not responsible for the actions or conduct of others you may encounter using Facebook View (whether online or offline) or any content they may share (including offensive, inappropriate, obscene, unlawful, and other objectionable content). YOU EXPRESSLY ACKNOWLEDGE AND AGREE THAT YOUR ACCESS TO AND USE OF FACEBOOK VIEW IS AT YOUR SOLE RISK. No oral or written information, guidelines or advice given by Meta will create a warranty. To the fullest extent permitted by law, we DISCLAIM ALL REPRESENTATIONS, WARRANTIES, AND CONDITIONS, WHETHER EXPRESS, IMPLIED, OR STATUTORY, ORAL OR WRITTEN, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+
+THERE ARE IMPORTANT HEALTH AND SAFETY WARNINGS AND INSTRUCTIONS THAT YOU MUST READ BEFORE USING FACEBOOK VIEW, WHICH ARE AVAILABLE AT www.facebook.com/help/ray-ban-stories/safety TO REDUCE THE RISK OF PERSONAL INJURY, DISCOMFORT, AND PROPERTY DAMAGE, PLEASE ENSURE THAT ALL USERS OF YOUR GLASSES OR FACEBOOK VIEW READ THE WARNINGS AND INSTRUCTIONS PROVIDED AT THE LINK ABOVE CAREFULLY BEFORE USING EITHER.
+
+WARNING: FAILURE TO FOLLOW THIS HEALTH AND SAFETY INFORMATION MAY IMPAIR OR BREAK THE GLASSES AND RESULT IN DAMAGE TO FACEBOOK VIEW, YOUR GLASSES, OR THE DEVICE YOU ARE USING FACEBOOK VIEW WITH, AND MAY INCREASE THE RISK OF PERSONAL INJURY, PROPERTY DAMAGE, DISCOMFORT OR OTHER POTENTIAL HAZARDS. BY USING FACEBOOK VIEW, YOU REPRESENT AND WARRANT THAT YOU HAVE REVIEWED THESE WARNINGS AND INSTRUCTIONS (AND WILL REVIEW ANY UPDATES THERETO), AND WILL ACT IN ACCORDANCE WITH SUCH WARNINGS AND INSTRUCTIONS.
+
+Our liability shall be limited to the fullest extent permissible under applicable law, and under no circumstance will we be liable to you for any lost profits, revenues, information, data, or content, or for any consequential, special, indirect, exemplary, punitive, or incidental damages arising out of or related to the Terms or the Meta Products, including Facebook View (however caused and on any theory of liability, including negligence), even if we have been advised of the possibility of such damages.
+
+Our aggregate liability arising out of or relating to these Facebook View Terms or Facebook View will not exceed the greater of $100 or the amount you have paid us in the past twelve months.
+
+THE LAWS OF SOME JURISDICTIONS DO NOT ALLOW THE DISCLAIMER OF IMPLIED WARRANTIES OR CERTAIN TYPES OF DAMAGES, SO SOME OR ALL OF THE DISCLAIMERS AND LIMITATIONS OF LIABILITY IN THIS SECTION MAY NOT APPLY TO YOU.
+
+You agree to defend (at our request), indemnify and hold harmless Meta and its affiliates, and their independent contractors and service providers, and each of their respective directors, officers, employees and agents (collectively, "Meta Parties") from and against all claims, liabilities, damages, losses, and expenses (including, but not limited to, reasonable attorneys' fees and costs) arising out of or in any way connected with (a) your purchase or use of, or inability to use, Facebook View; (b) your violation of the Terms or any other applicable terms, policies, warnings or instructions provided by Meta or a third party in relation to Facebook View; (c) your violation of any applicable law or any rights of any third party; or (d) any content you provide, upload, or transmit via Facebook View.
+
+
+DISPUTE RESOLUTION
+
+PLEASE READ THIS SECTION 3(7) CAREFULLY BECAUSE IT MAY SIGNIFICANTLY AFFECT YOUR LEGAL RIGHTS, INCLUDING YOUR RIGHT TO FILE A LAWSUIT IN COURT. THIS SECTION 3(7) REQUIRES YOU TO SUBMIT TO BINDING ARBITRATION ANY AND ALL DISPUTES (EXCEPT AS EXPRESSLY PROVIDED FOR BELOW) ARISING OUT OF OR RELATED TO THESE FACEBOOK VIEW TERMS OR FACEBOOK VIEW, AND LIMITS THE MANNER IN WHICH YOU CAN SEEK RELIEF FROM US.
+
+In the event that you have any dispute with us that is connected to these Facebook View Terms or your access or use of Facebook View, you may contact us in writing (as explained below) and we will endeavor to resolve this dispute. Except as provided below, you and Meta agree that any cause of action, claim, or dispute between us arising out of or related to these Facebook View Terms or your access or use of Facebook View ("claim(s)") must be resolved by arbitration on an individual basis. Class actions and class arbitrations are not permitted; you may bring a claim only on your own behalf and cannot seek relief that would affect other users of Facebook View. If there is a final judicial determination that any particular claim (or a request for particular relief) cannot be arbitrated in accordance with the limitations of this Section 3(7), then only that claim (or only that request for relief) may be severed and brought in court. All other claims (or requests for relief) remain subject to this Section 3(7).
+
+Instead of using arbitration, you can bring claims in your local “small claims” court, if the rules of that court will allow it. If you don't bring your claims in small claims court (or if you or we appeal a small claims court judgment to a court of general jurisdiction), then the claims must be resolved by binding, individual arbitration. The American Arbitration Association (“AAA”) will administer all arbitrations under its Consumer Arbitration Rules, as amended by these Facebook View Terms. YOU EXPRESSLY WAIVE THE RIGHT TO A TRIAL BY JURY.
+
+The arbitrator will conduct hearings, if any, by teleconference or videoconference, rather than by personal appearances, unless the arbitrator determines upon request by you or by us that an in-person hearing is appropriate. Any in-person appearances will be held at a location that is reasonably convenient to both parties with due consideration of their ability to travel and other pertinent circumstances. If the parties are unable to agree on a location, such determination should be made by the AAA or by the arbitrator. The arbitrator's decision will be final and binding. The arbitrator will have authority to award temporary, interim or permanent injunctive relief or relief providing for specific performance but only to the extent necessary to provide relief warranted by the individual claim before the arbitrator. The award rendered by the arbitrator may be confirmed and enforced in any court having jurisdiction thereof. The arbitrator will not be bound by rulings in other arbitrations in which you are not a party. Notwithstanding any of the foregoing, nothing in the Meta Terms of Service as supplemented by these Facebook View Terms will preclude you from bringing issues to the attention of federal, state or local agencies and, if the law allows, they can seek relief against us for you. Disputes related to: (i) intellectual property rights (like copyrights, patents, trademarks, and trade secrets), or (ii) efforts to interfere with Facebook View or engage with Facebook View in unauthorized ways are not subject to arbitration and instead must be brought in court. In addition, disputes relating to the scope and enforceability of this arbitration provision or the interpretation of the prohibition of class and representative actions are for a court to decide, in the jurisdictions specified below.
+
+This arbitration provision is governed by the Federal Arbitration Act. You can opt out of this arbitration provision within 30 days of the date that you first agreed to any version of these Facebook View Terms. To opt out, you must send your name, residence address, and email address used for your Facebook account, and a clear statement that you want to opt out of this arbitration provision, and you must send them here: Facebook, Inc. ATTN: Facebook View Arbitration Opt-out, 1601 Willow Road, Menlo Park, CA 94025.
+
+Before you commence arbitration of a claim, you must provide us with a written Notice of Dispute that includes your name, residence address, username, and email address you use for your Facebook account, a detailed description of the dispute, and the relief you seek. Any Notice of Dispute you send to us should be mailed to Meta Platforms, Inc., ATTN: Facebook View Arbitration Filing, 1601 Willow Road, Menlo Park, CA 94025. Before we commence arbitration, we will send you a Notice of Dispute to the email address you use with your Facebook account, or other appropriate means. If we are unable to resolve a dispute within 30 days after the Notice of Dispute is received, you or we may commence arbitration.
+
+We will pay all arbitration filing fees, administration and hearing costs and arbitrator fees for any arbitration if your claims seek less than $75,000 and you timely provided us with a Notice of Dispute. For all other claims, the costs and fees of arbitration shall be allocated in accordance with AAA's applicable rules, including rules regarding frivolous or improper claims.
+
+For any claim that is not arbitrated or resolved in small claims court or an appeal thereof or not subject to arbitration, you and Meta each agree that it will be resolved exclusively in the U.S. District Court for the Northern District of California or a state court located in San Mateo County. You also agree to submit to the personal jurisdiction of either of these courts for the purpose of litigating any such claim. Without prejudice to the foregoing, you agree that, in its sole discretion, Meta may bring any claim we have against you in any competent court in the country in which you reside that has jurisdiction over the claim.
+
+Severability. If any portion of these Facebook View Terms is found to be unenforceable (including but not limited to the terms of, Section 3(7)), the unenforceable portion will be deemed amended to the minimum extent necessary to make it enforceable, and if it can’t be made enforceable, then it will be severed and the remaining portion will remain in full force and effect. If we fail to enforce any of the Facebook View Terms, it will not be considered a waiver. Any amendment to or waiver of these Facebook View Terms must be made in writing and signed by us.
+
+Governing Law. The laws of the State of California, to the extent not preempted by or inconsistent with U.S. federal law, will govern these Facebook View Terms and any claim, without regard to conflict of law provisions.
+
+Transfer and Trade Compliance. Facebook View is only intended for use in the Supported Countries (listed at http://www.facebook.com/help/ray-ban-stories/supported-countries). Certain functionality and services may not be accessible outside of, and may vary among and within, the Supported Countries. You will comply with all applicable U.S. and non-U.S. export control and trade sanctions laws (“Export Laws”). You will not use or download Facebook View if you are located in a country or region subject to comprehensive U.S. trade sanctions, if you are listed on any U.S. or non-U.S. restricted parties list, or for any purpose prohibited by Export Laws, and you will not disguise your location through IP proxying or other methods. You will not, directly or indirectly, export, re-export, provide, resell, transfer or otherwise dispose of Facebook View: (a) to any individual, entity, or country or region prohibited by Export Laws; (b) to anyone on U.S. or non-U.S. government restricted parties lists; or (c) for any purpose prohibited by Export Laws, including nuclear, chemical or biological weapons, or missile technology applications without the required government authorizations. You will not, and will not allow others to, use, distribute or transfer, Facebook View in any manner that violates applicable law, including all applicable export control and trade sanctions laws of the Supported Countries and any other applicable governmental authority. Facebook View may not be resold, transferred or otherwise disposed of in a country subject to U.S. embargo or to a person or organization sanctioned by the U.S. government without obtaining required approvals from the U.S. government.
+
+Termination. These Facebook View Terms are effective until terminated or will terminate when the Meta Terms of Service between you and us is terminated. Upon termination, these Facebook View Terms shall terminate as an agreement between you and us, but the provisions in Sections 2(1) and 3(3)-(13) of these Facebook View Terms will survive and remain in place.
+
+Government rights. Facebook View, including all related software, technical data and documentation, is a "Commercially available off-the-shelf (COTS) item" as defined in Section 2.101 of Title 48 of the U.S. Code of Federal Regulations. We provide Facebook View for public sector end use, including U.S. Government end use, with the same rights as all other end users pursuant to the Terms. If a public sector entity, including a U.S. Government entity, has a need for any additional rights, it must negotiate directly with Meta to determine if the parties can negotiate an acceptable amendment to the Terms that must be included in any applicable contract or agreement.
+
+Other Terms
+
+The Meta Terms of Service, these Facebook View Terms, and all other applicable terms (including, if applicable, a Product Testing Agreement, as defined below) make up the entire agreement between you and Meta regarding your use of Facebook View (except to the extent that we expressly state that separate terms – and not these – apply) and supersede any prior agreements regarding your use of Facebook View.
+
+If you use Facebook View pursuant to a product testing agreement, beta testing agreement, or similar agreement (a "Product Testing Agreement"), in the event of a conflict between such Product Testing Agreement and the Terms, the Product Testing Agreement shall govern to the extent of the conflict.
+
+The Terms govern personal and non-commercial uses of Facebook View. We may permit certain limited commercial or business uses of Facebook View under the Terms pursuant to and solely as stated in separate Facebook View Commercial Terms and any other applicable terms referenced therein. By using Facebook View for such commercial or business uses under the Terms, you agree to the Facebook View Commercial Terms.
+
+For the avoidance of doubt, the provisions stated in Section 4.E of the Meta Terms of Service also apply to these Facebook View Terms. Meta may at any time assign, transfer, or subcontract all or any of its rights or obligations under these Facebook View Terms. Nothing in these Facebook View Terms limits any of our rights under the Meta Terms of Service or any additional terms that they reference.</p>`,
+  `<p>United States Regional Privacy Notice
+Effective January 1, 2025
+
+About this Notice
+This United States Regional Privacy Notice (“Notice”) is for people living in the United States and supplements the following privacy policies:
+
+Supplemental Meta Platforms Technologies Privacy Policy
+Supplemental Meta Portal Privacy Policy
+Supplemental Facebook View Privacy Policy
+This Notice explains how we, Meta, collect, use, and disclose your Personal Information. It also describes how to exercise your rights under various U.S. privacy laws, collectively the “U.S. Privacy Laws.”
+
+When we say “Personal Information” in this Notice, we mean information that identifies, relates to, describes, is reasonably capable of being associated with, or could reasonably be linked with you, directly or indirectly. Personal Information does not include information that cannot be reasonably linked to you. When data is deidentified (as defined by the U.S. Privacy Laws), we maintain it in deidentified form and do not attempt to reidentify the information.
+
+How we collect, use, and disclose Personal Information
+To provide the products or features offered by Meta (“Meta Company Products"), we process information about you, including Personal Information, whether or not you have an account or are logged in. The best way to learn about the types of information we collect and how we use them is to review the Meta Privacy Policy and the privacy policies of our other products.
+
+Subject to the limitations we describe in our Privacy Policy and applicable supplemental privacy policies, we may disclose your Personal Information for business purposes with strict restrictions on how our partners can use and disclose the data we provide. We may also disclose it at your direction or in other ways that are in accordance with the U.S. Privacy Laws. We don’t “share” your Personal Information, as defined in the California Consumer Privacy Act (“CCPA”). We also do not sell any of your Personal Information, and we never will.
+
+The information we collect, use and disclose about you will vary depending on how you interact with Meta and our products. For the products covered by this Notice, here’s a summary of:
+
+The categories of Personal Information we may have collected about you over the past 12 months
+How we may use your Personal Information
+To whom we may have disclosed that information
+Categories of Personal Information we collect may include:  Examples of how Personal Information may be used include: Parties with whom each category of Personal Information may be disclosed include:
+Identifiers;
+Characteristics of protected classifications;
+Commercial information;
+Photos and videos, which may include face imagery;
+Internet or other electronic network activity information, including browser and app logs, content you view or engage with, and app, browser and device information;
+Location-related information;
+Audio or visual information, including photos, videos, and voice recordings, if available and you or others choose to provide them;
+Information derived from other Personal Information about you, which could include your preferences, interests, and other information used to personalize your experience;
+Other information you provide; and
+Precise geolocation information, which may be considered Sensitive Personal Information under U.S. Privacy Laws.
+Providing, personalizing, and improving our products, including ads;
+Facilitating transactions, measurement, analytics, and other business services;
+Promoting safety, integrity, and security;
+Providing marketing communications to you;
+Communicating with you; and
+Researching and innovating for social good.
+For categories of sensitive personal information that we collect, we will use or disclose it either with your specific consent when required, or as otherwise permitted by law, including the CCPA. Learn more about the permitted purposes under CCPA.
+People and accounts you share and communicate with, including people with whom you share your device(s) or who have physical access to your device(s);
+People and accounts with which others share or reshare content about you;
+If you have a parent-managed Meta account, your parent or guardian;
+Apps, websites, and third-party integrations on or using our products;
+New owners in the event of a change of ownership or control of all or part of our products or their assets changes;
+Partners, including partners offering goods and services on our products, as explained in our Privacy Policy;
+Manufacturers and distributors;
+Vendors, including measurement and marketing vendors;
+Service providers;
+Third parties, including external researchers;
+Law enforcement or other third parties in connection with legal requests, to comply with applicable law or to prevent harm; and
+The Meta Companies.
+Permitted purposes for sensitive personal information under CCPA
+The California Consumer Privacy Act (“CCPA”) defines “sensitive personal information” as personal information concerning:
+
+A consumer’s social security, driver’s license, state identification card, or passport number
+A consumer’s account log-in, financial account, debit card, or credit card number in combination with any required security or access code, password, or credentials allowing access to an account
+A consumer’s precise geolocation
+A consumer’s racial or ethnic origin, religious or philosophical beliefs, or union membership
+The contents of a consumer’s mail, email, and text messages unless the business is the intended recipient of the communication; a consumer’s genetic data
+The processing of biometric information for the purpose of uniquely identifying a consumer
+Information collected and analyzed concerning a consumer’s health
+Information collected and analyzed concerning a consumer’s sex life or sexual orientation
+Information generated by measuring the activity of a consumer's central or peripheral nervous system, and that is not inferred from non-neural information.
+Under the CCPA, businesses that use or disclose the sensitive personal information of California consumers for purposes other than those specified in section 7027(m) of the CCPA Regulations must provide California consumers with a “Limit the Use of My Sensitive Personal Information” link to limit the business’s use of their sensitive information to only those expressly permitted under the law. For ease of reference, the purposes identified in the CCPA for which a business may use or disclose sensitive personal information without being required to provide a “Limit the Use of My Sensitive Personal Information” link are as follows:
+
+To perform the services or provide the goods reasonably expected by an average consumer who requests those goods or services
+To prevent, detect, and investigate security incidents that compromise the availability, authenticity, integrity, and confidentiality of stored or transmitted Personal Information
+To resist malicious, deceptive, fraudulent, or illegal actions directed at us and to prosecute those responsible for those actions
+To ensure the physical safety of natural persons
+For short-term, transient use
+To perform services on behalf of the business, such as maintaining or servicing accounts, providing customer service, processing or fulfilling orders and transactions, verifying customer information, processing payments, providing financing, providing analytic services, providing storage, or providing similar services
+To verify or maintain the quality or safety of our products, and to improve, upgrade, or enhance the products or features offered by the business
+To collect or process sensitive personal information where such collection or processing is not for the purpose of inferring characteristics about a consumer
+Sources of Personal Information
+Depending on how you interact with Meta and our products, the categories of sources from which we’ve collected Personal Information about you may include:
+
+You: We receive Personal Information from the information that you provide. For example, we collect the content, communications, and other information you provide when you use our products, including when you sign up for an account, create or share content, and message or communicate with others. We collect information about the people, pages, accounts, hashtags, and groups you are connected to, and how you interact with them across our products, such as the people you communicate with the most or the groups you are part of. We also collect information about how you use our products, including ads we serve on and off our products, such as the types of content you view or engage with, the features you use, the actions you take, the people or accounts you interact with, and the time, frequency, and duration of your activities.
+Other people: We may also receive and analyze content, communications, and information about you that other people provide when they use our products, such as send a message to you, or upload, sync, or import your contact information.
+Your device(s): We collect information from and about the computers, phones, connected TVs, and other web-connected devices you use that integrate with our products, and we combine this information across different devices you use.
+Meta Companies: We receive information from other Meta Companies according to their terms and policies and as permitted by applicable law. In some cases, we act as a service provider for other Meta Companies, and act on their behalf and in accordance with their instructions and terms.
+Partners, vendors and third parties: Advertisers, app developers, online content providers, publishers and other partners can send us information for business purposes including through the Meta Business Tools they use, our social plugins (such as the Like button), Facebook Login, our APIs and SDKs, or the Meta pixel. These partners provide information about your activities on and off our products —including information about your device, websites you visit, apps you use, games you play, and purchases you make. We also obtain information about your online and offline actions, and purchases from third-party data providers who have the rights to provide us with your information. These partners collect your information when you visit or use their services or through third parties they work with. We require each of these partners to have rights to collect, use, and disclose your information before providing any information to us. We also obtain information from publicly available sources, research institutions and professional and non-profit groups, including companies or organizations that provide content including videos, photos, or audio.
+How long do we keep your Personal Information?
+We keep Personal Information, including sensitive Personal Information, as long as we need it to provide our products, comply with legal obligations or protect our or other’s interests. We decide how long we need information on a case-by-case basis.
+
+Here’s what we consider when we decide:
+
+If we need it to operate or provide our products.
+How long we need to retain the information to comply with certain legal obligations.
+If we need it for other legitimate purposes, such as to prevent harm; investigate possible violations of our terms or policies; promote safety, security and integrity; or protect ourselves, including our rights, property or products.
+Learn more in the “Why we may preserve your information longer” section of the Meta Privacy Policy here.
+
+How can you exercise your rights provided under the U.S. Privacy Laws?
+Depending on where you live and subject to certain exceptions, you may have some or all of the following rights:
+
+Right to Know: The right to request that we disclose to you the Personal Information we collect, use, or disclose, and information about our data practices.
+Right to Request Correction: The right to request that we correct inaccurate Personal Information that we maintain about you.
+Right to Request Deletion: The right to request that we delete your Personal Information that we have collected from or about you.
+Right to Opt out of Targeted Advertising: The right to opt-out of the processing of your Personal Information for the purposes that may be considered "targeted advertising" under the U.S. Privacy Laws, including information obtained from your activities on nonaffiliated websites or online applications.
+Right to Non-Discrimination: The right not to receive discriminatory treatment for exercising your privacy rights.
+To submit a request to exercise your rights, and as applicable, to appeal a consumer rights action, please visit this webform.
+
+Here’s how you can exercise the right to opt out of targeted advertising:
+
+For ads you see through Meta Products, visit the “Activity information from ad partners” section in Ad Preferences or visit the “Accounts” section in Accounts Center to control how your info is combined and used across your accounts, including for ads.
+For ads you see on other apps and websites about Meta Products or services, use the Digital Advertising Alliance and the NAI industry opt-outs.
+Depending on where you live, you may have the right to opt out of targeted advertising through a Global Privacy Control (GPC) enabled browser setting. If you have this right, when you visit and log in to our websites in a GPC-enabled browser, we will treat our initial receipt of the GPC signal as a valid request to opt-out of targeted advertising, as defined by applicable U.S. privacy laws granting this right. Please note that if you are logged out, our processing of the signal will be limited to the specific browser that you are using. You may need to renew your opt‑out choice if you use a different browser to access our websites. Other than GPC, we do not recognize any "do not track" signals.
+To the extent you use a product that processes your Personal Information for the purposes of targeted advertising, you can exercise the right to opt out of targeted advertising, see the “Data About Your Activity from Partners” section in Ad Preferences.
+
+Please note that to protect your information and the integrity of our products, we may need to verify your identity before processing your request. In some cases, we may need to collect additional information to verify your identity, such as a government issued ID.
+
+Under certain U.S. Privacy Laws, you may also designate an authorized agent to make these requests on your behalf. If you use an authorized agent to submit a request, we may need to collect additional information, such as a government issued ID, to verify your identity before processing your request to protect your information. In most cases, we will facilitate your request through automated tools available through your password-protected account.
+
+For information on the CCPA requests we have received, please see here.
+
+Contact for more information
+If you have additional questions about this Notice or how to exercise your rights under applicable U.S. Privacy Laws, please contact us.</p>`,
+  `<p>AI Glasses & Wearables
+Meta Neural Band
+Meta Neural Band charging cable
+Meta Ray-Ban Display
+Meta Ray-Ban Display charging case
+Ray-Ban Meta (PDF)
+Ray-Ban Meta Optics
+Ray-Ban Stories (PDF)
+Oakley Meta HSTN (PDF)
+Oakley Meta Vanguard (PDF)</>`,
+  `<p>AI Glasses Voice Privacy Notice
+Effective July 22, 2025
+
+Voice Services on Meta Wearable Products
+What can you do with voice services on Meta Wearable Products?
+The voice services available to you depend on the Meta Wearable Product and your location. The Meta AI service on Ray-Ban | Meta and Oakley | Meta AI glasses allow you to do things like get information, capture photos and videos, play music, and call and message using your voice.
+
+Voice interactions are things you say while using the voice services on Meta Wearable Products, such as voice controls on Ray-Ban Stories or the Meta AI service on Ray-Ban | Meta and Oakley | Meta AI glasses. Voice interactions include: things you say when you use a wake-word (for example, if your AI Glasses are playing music, and you say “Hey Meta, pause the music”); when you don’t use a wake-word for certain interactions (saying “pause music” if your AI Glasses are playing music, or “play message” after we tell you that you have a new message); or if you inadvertently activate our voice services, as well as any background sound that happens when you are interacting with our voice services.
+
+The Meta AI service on your Ray-Ban | Meta and Oakley | Meta AI glasses will activate when they detect the wake word (for instance, “Hey Meta” or another wake word, if available) so that it can respond to your voice. You can also activate the Meta AI service on your glasses to respond to your voice by pressing and holding the touchpad, if the touchpad has been designated to activate the Meta AI service on your glasses in your app settings. During a response you can also issue additional commands like “stop” or “cancel.”
+
+What information does Meta collect when I use voice services on Meta Wearable Products
+When you use voice services, like voice controls on Ray-Ban Stories or the Meta AI service on Ray-Ban | Meta and Oakley | Meta AI glasses, we process audio recordings of your voice interactions to create text transcripts of what you say, as well as data related to your voice interactions, to respond to your requests. Related data includes information such as the hardware version of your glasses and the length of the audio related to your interaction.
+
+How does Meta use my recordings and related transcripts when I use the Meta AI service on Ray-Ban | Meta and Oakley | Meta AI glasses?
+We primarily use recordings and transcripts to process and carry out your requests. Text transcripts and audio recordings of your voice interactions are stored by default to help improve Meta’s products. This includes improving the Meta AI service (and related technologies) and features, and training and improving our speech technologies. For example, audio recordings are stored and used to help Meta’s products better understand and fulfill requests. We use machine learning and trained reviewers to process this data to improve Meta’s products. You can access and delete recordings and related transcripts in the Meta AI App. Stored audio recordings and related data are used to improve Meta’s speech technologies (for example, our speech-to-text technologies) with the help of trained reviewers, as described below.
+
+Trained reviewers are useful in evaluating how well Meta’s products respond to your voice. For example, reviewers can evaluate if the glasses actually played the next song following a command like “Hey Meta, next song,” and help improve Meta’s voice services to respond more accurately over time. Making sure our products can understand and respond to a wide range of speech patterns, phrases, local dialects, and accents is important to us. Trained reviewers are particularly helpful in identifying voice interactions that machines are likely to misinterpret.
+
+We will store voice recordings even if you unintentionally activate a voice interaction. If our systems detect that you didn’t intend to activate a voice interaction, we will label these voice interactions as “false wakes” or misactivations, and delete them within 90 days of detection. Voice transcripts and stored audio recordings are otherwise stored for up to one year to help improve Meta’s products. You can delete stored voice recordings and transcripts sooner in your App. After deletion, they will no longer be used to improve Meta products. Deleting a recording and transcript will also delete the data associated with that interaction.
+
+How does Meta use my recordings and related transcripts when I use voice controls on Ray-Ban Stories?
+We primarily use recordings and transcripts to process and carry out your requests. We also use text transcripts and related data to help improve Meta’s products. You can choose to store your voice recordings to help improve Meta’s voice controls and Meta products on Ray-Ban Stories. When storage is enabled, audio recordings of your voice interactions are stored to help Meta’s products better understand and fulfill requests. We use machine learning and trained reviewers to process this data to improve, troubleshoot and train our voice controls and other Meta products. You can turn voice storage off in your settings at any time. Even with storage off, you can still use voice controls. You can also access and delete stored information in your settings.
+
+Storing your voice recordings will help Meta’s products better understand and fulfill requests, as well as respond to a wide range of speech patterns, phrases, local dialects, and accents. For example, people that speak a regional dialect and have storage of their voice recordings enabled will help Meta’s products better understand and more accurately respond to requests from people that speak that regional dialect.
+
+Even if voice recording storage is turned off, you can still use voice controls. When storage of voice recordings is turned off, we will delete all voice recordings immediately after processing, which means you won’t be able to hear, view or delete this information. We also will not use your voice recordings to improve Meta’s products and voice recordings will not be reviewed by trained reviewers. Any voice recordings that occurred before you turned off storage will still be stored for up to one year, unless you delete them sooner. You can manage storage of your voice recordings in Settings.
+
+How does Meta protect my privacy during human review?
+We have a team of vetted and trained personnel who assist in reviewing stored audio recordings of your voice interactions, for purposes of improving Meta’s products. These individuals must comply with strict privacy and security requirements in their handling of this information. We use controlled and monitored systems to ensure that they access only the information required to complete product improvement training tasks. And we protect your privacy by changing the pitch of voice recordings when they are reviewed.
+
+Download your information
+You can download stored transcripts and related data, like the serial number of your glasses or the general category of your voice interaction with the Download Your Information tool. You can access this tool from the App or on the web.</p>`,
+  `<p>Wrist Input Privacy Notice
+Effective September 30, 2025
+
+What devices can you control with the Meta Wrist Devices?
+Meta Wrist Devices enable you to control compatible devices, such as certain AI Glasses, through various hand gestures. The technology powering the Meta Wrist Devices is explained in more detail below. Please note that availability of the Meta Wrist Devices may vary depending on your location, and this Notice applies only if available in your location.
+
+What data is processed to provide input functionality for Meta Wrist Devices?
+When you wear a Meta Wrist Device, the device processes the data as described in this Notice, and in accordance with the Supplemental Meta Platforms Technologies Privacy Policy, so that you can connect with and control devices through hand gestures (e.g., controlling your Wearable Products).
+
+The Wrist Device detects and analyzes electrical muscle signals using surface electromyography (“EMG”) sensors on the device. The EMG sensors detect the electrical activity of your muscles as you perform a gesture. The software on the Wrist Device uses these electrical muscle signals, along with accelerometer and gyroscope data (collectively, “wrist sensor data”), to detect the gesture you are performing and transform it into a digital input or command for the connected device. For example, a pinch between your index finger and thumb will send a command to a connected pair of AI Glasses, such as to play music on the glasses. The specific interaction enabled by the gesture will depend on the connected device (e.g., the AI Glasses) and the product experience you are controlling with the Meta Wrist Device.
+
+What other data may be collected if you have issues with your Wrist Device?
+Bug report
+
+If you are experiencing issues with the performance of your Wrist Device, you can initiate a help and support flow to report a bug. During that flow, you will be asked questions about what you were trying to do with the Wrist Device and may be asked to perform gestures, so Meta can better assess and fix the issue. The data that you share as part of this help and support flow (including wrist sensor data) will be sent to Meta managed servers and processed and stored for as long as needed to enable Meta to diagnose and fix the reported issue, and similar issues, as well as to improve and develop Meta Products and EMG functionality and features. The data will be associated with your account.
+When you send a bug report, your wrist sensor data is stored until you delete the data or you delete your account. You can request deletion of the wrist sensor data you provided in bug reports by going to https://help.meta.com/support/privacy.
+
+Learn more generally about surface EMG data
+To learn more generally about the electrical muscle signals used to enable wrist-based inputs and controls, visit Meta’s page on EMG Wearables.
+
+Get news and updates from Meta
+Email
+</p>`,
+  `<p><
+The links below include relevant attribution notices for third party software that may be contained in portions of each below named application or software.
+
+Meta View for iOS
+
+Meta View for Android
+
+Ray-Ban Stories
+
+Ray-Ban | Meta and Oakley | Meta HSTN Glasses
+
+Meta Ray-Ban Display
+
+Meta Neural Band
+
+Oakley | Meta Recode</p>`,
+  `<p>Special Terms and Conditions
+Meta Platforms Technologies, LLC Publisher Program
+
+Overview
+
+Meta Platforms Technologies, LLC ("Company” or “Meta”), operates the www.meta.com website. As part of its website, Meta offers the Meta AI Glasses Creator Program (the "Program"), through which approved Meta AI Glasses Creators (the “Publishers”) providing marketing services through owned or third party websites and apps, subscription services, promotional services, and/or syndicated services (collectively, the “Services”) are granted a limited, non-exclusive, non-transferable, and revocable right to: (i) use Meta’s trademarks, trade names, service marks, logos, and other brand designations (collectively, “Meta Marks”) solely for the purpose of advertising and promoting Meta products and services and the Meta website in a manner in compliance with this Agreement (defined below) and the Publisher Service Agreement between Publisher and Commission Junction LLC. (“CJ”); (ii) post or circulate an approved graphical or textual internet hyper-link (the “Link”) to the Meta website; and (iii) direct visitors to the website (the specific URL) designated by Meta (the “Destination Site”). Meta and Publishers are parties to agreements with CJ and are participants in the CJ Network (the “CJ Program”). This Agreement provides terms and conditions applicable to Your membership in the Program that are in addition to any terms and conditions that You have agreed to pursuant to Your Publisher Service Agreement with CJ (“PSA”). Capitalized terms used in this Agreement not otherwise defined herein shall have the same meaning as defined in the PSA, or if not defined in the PSA, as reasonably understood by the nature and context in the PSA and this Agreement. Nothing contained within this Agreement may conflict with the terms and conditions in the PSA; in the case of such conflict, the PSA shall control.
+
+Publishers are offered the opportunity to earn a commission for referring visitors to the Meta website who complete the Transaction required under the Program on Meta’s Destination Site (“Commisions”). The Commissions rate will be set forth within the CJ Program Term for Meta and may be changed from time to time by Meta with seven (7) days written notice through the Network Meta. Payment of Commissions earned by Publisher for valid Meta transactions shall be made by Meta through CJ in accordance with the terms of the CJ Program.
+
+Approval
+
+Participation in the Program is subject to Meta’s approval. Prospective Publishers must first submit an application to Meta through CJ in order to become an approved Publisher eligible to post Links to the Meta website and earn Commissions. After the application has been submitted, Meta will have the option of approving or declining the application at its sole and absolute discretion for any reason or no reason. Participation in the Program may be limited to Publishers located in certain countries and is void where prohibited by law.
+
+If approved, the Publisher/You will have already acknowledged acceptance of this Agreement by having clicked through the “Apply To Program” (or otherwise named by CJ) button, having checked the box stating “Yes, I have read and accepted the following terms and conditions” (or as otherwise described by CJ) and having clicked the button to continue, thereby assenting to the Special Terms and Conditions of the Program between Meta and Publisher (also referred to as this “Agreement”). This Agreement shall apply only to approved Publishers who accept the Special Terms and Conditions of the Program and only Publishers who accept this Agreement may participate in the Program.
+
+Other than for the payment of Commissions, Publisher shall have no claims to any additional compensation, commissions or business derived by or through a Destination Site.
+
+Participation in the Program does not constitute an employment, broker or agency relationship between Publisher and Meta nor does it create any partnership, joint venture, franchise, or sales representative relationship between the parties.
+
+Specific Terms
+
+All services provided by Publisher shall be provided in compliance with all applicable laws, regulations, and marketing disclosure requirements, including but not limited to Federal Trade Commission guidance, any laws governing any individual person with a digital audience identified, recruited, managed, recognized and/or rewarded to participate in marketing, promotional, editorial and or campaign activities including, but not limited to, creating and publishing original content, promoting content through social media outlets like Facebook, Instagram, X, etc.
+
+Publisher’s services, content and/or social media postings will be in strict accordance with any Meta guidelines and/or policies, including but not limited to Meta Brand Guidelines, and Meta Branded Content Guidelines (attached hereto as “Exhibit A”).
+
+Publisher warrants and represents that content created by Publisher will be the original work and creation of Publisher and will not infringe on the rights (including without limitation, any intellectual property rights) of any third party. Publisher will be liable to Meta for the acts and omissions of Publisher in accordance with this Section. Publisher will indemnify Meta from any liability or expense arising out of (i) Publisher’s failure to comply with the representations, warranties and obligations set forth herein or (ii) any claim that otherwise arises from any acts or omissions of Publisher in performing the Services.
+
+Publisher will ensure that: (1) all Services are provided in compliance with all applicable laws and regulations including, but not limited to, any laws governing activities as set forth in Section 3(A) above, and disclosure requirements; and (2) all social media postings made pursuant to the Program will comply with any Meta guidelines and/or policies provided to Publisher in writing, including but not limited to Meta’s Endorsement Guidelines.
+
+Publisher agrees to conduct itself at all times in accordance with the highest standards of integrity and ethical behavior. Publisher shall not make any statement or engage in any conduct or activity, whether online or offline, that, in Meta’s sole judgment, brings or could bring Publisher, Meta, or any of Meta’s products, services, brands, or affiliates into public disrepute, contempt, scandal, or ridicule, or that may shock, insult, or offend the community, or that may reflect unfavorably upon Meta’s reputation or goodwill. This includes, but is not limited to, conduct involving criminal acts, hate speech, discrimination, harassment, violence, or any other behavior that is illegal, unethical, or inconsistent with Meta’s values and policies. Publisher will not make any statement or engage in any conduct that is disparaging of Meta or Meta’s products or services.
+
+Publisher may not use any Meta Marks in any manner that suggests co-branding, endorsement, or partnership beyond the scope of this Program, nor may Publisher use Meta Marks in a way that may dilute, tarnish, or otherwise harm the reputation or distinctiveness of any Meta Marks.
+
+Publisher is strictly prohibited from (i) using or registering any Meta Marks, in whole or in part, into any new or existing trademarks, service marks, company names, trade names, domain names, social media handles, or other source identifiers, whether registered or unregistered, or from creating any composite marks that include any Meta Marks; or (ii) claiming rights in any trademark in a way that is confusingly similar to or dilutive of any Meta Marks. Any such use is unauthorized and constitutes a material breach of this Agreement.
+
+Publisher shall be responsible for any taxes imposed on it under applicable prevailing tax laws and regulations and for complying with any applicable tax laws and regulations.
+
+Term and Termination
+
+The term of this Agreement shall be continuous, unless and until either party properly terminates this Agreement and the relationship, in accordance with the following: (i) Meta shall provide Publisher with seven (7) days written notice via the Network Service (via the “Expire” option), except as provided for in Section 4(B) below; or (ii) Publisher shall use the automated system within the Network Service to expire the affiliation and Publisher shall comply with Sections 4(D)(v) and 4(D)(vi) below.
+
+This Agreement may be terminated immediately by CJ in the event that Publisher: (i) violates the PSA; or (ii) violates this Agreement. . Additionally, if Meta determines, in its sole discretion, that Publisher failed to conduct itself at all times in accordance with the highest standards of integrity and ethical behavior, Meta may immediately terminate this Agreement and require Publisher to cease all use of Meta Marks and remove all content related to Meta. Publisher shall indemnify and hold harmless Meta from any claims, damages, or expenses arising from Publisher’s breach of Section 3 of this Agreement. For the avoidance of doubt, any unauthorized use of Meta Marks, including but not limited to incorporation into new marks or use outside the scope of this Agreement, will result in immediate termination of this Agreement and may subject Publisher to legal action, including but not limited to injunctive relief, damages, and recovery of attorneys’ fees and costs. Publisher agrees to indemnify and hold harmless Meta from any claims, damages, or expenses arising from Publisher’s misuse of Meta Marks.
+
+Upon any termination of this Agreement, Meta and Publisher will be released from all obligations and liabilities to the other party occurring or arising after the date of such termination or the transactions contemplated hereby, except with respect to those obligations which by their nature are designed to survive termination or as provided herein, provided that no such termination will relieve Publisher from any liability arising from any breach of this Agreement occurring prior to termination. Upon termination or expiration of this Agreement, Publisher must immediately cease all use of Meta Marks in any form. Publisher acknowledges that any breach of this Agreement, including but not limited to misuse of Meta Marks or violation of Section 3, may cause irreparable harm to Meta for which monetary damages may be inadequate. In the event of such breach, Meta shall be entitled to seek immediate injunctive or equitable relief, in addition to any other remedies available at law or in equity, without the necessity of posting bond or proving actual damages.
+
+Upon termination of this Agreement, (i) Meta’s acceptance of additional referrals obtained through Publisher shall not constitute a continuation or renewal of this Agreement or a waiver of such termination, (ii) Publisher shall be entitled only to those unpaid Commissions, if valid, earned by Publisher on or prior to the date of termination, (iii) Publisher shall in no event be entitled to Commissions with respect to any amount of valid referrals delivered after the date of termination, (iv) all rights and licensees of Publisher hereunder shall immediately terminate, (v) Publisher shall cease all uses of any Meta Marks, trade names, trademarks, service marks, logos, and other designations of the Program, and (vi) Publisher shall remove all Meta links.
+
+Additional Terms
+
+The provisions of this Agreement are severable. If any provision of this Agreement, or the application thereof to any person or circumstance shall be deemed invalid or unenforceable under any applicable law, such invalidity or unenforceability shall not affect the other provisions of this Agreement that can be given effect.
+
+No delay or failure by Meta in exercising any right under this Agreement, and no partial or single exercise of that right, shall constitute a waiver of that or any other right. Meta reserves all rights not expressly granted to Publisher under this Agreement. No rights or licenses are granted by implication, estoppel, or otherwise.
+
+The rights and remedies of Meta are not mutually exclusive; that is, the exercise of one or more of the provisions hereof shall not preclude the exercise of any other provision hereof.
+
+This Agreement shall be deemed a mutual agreement and shall not be construed and/or interpreted in favor or against either party on the basis of preparation of the Agreement.
+
+By applying to the Program through the Network Service, and by clicking–through the “Apply To Program” (or otherwise named by CJ) button and clicking to continue after checking the box acknowledging Your reading of this Agreement, You execute, accept, enter into, and become a party to this Agreement, effective on the date of such acceptance to this Agreement.
+
+Meta reserves the right to modify the terms and conditions of this Agreement in its sole discretion upon seven (7) days written notice through the Network Service to Publisher. If any modification is unacceptable to Publisher, Publisher’s sole recourse is to terminate this Agreement by expiring the relationship and/or rejecting the new Program Term offered. Publisher’s continued participation in the Program by accepting the newly offered Program Term with new terms and conditions for this Agreement constitutes Publisher’s binding acceptance to the change.
+
+This Agreement (i) is not subject to any guild or other collective bargaining agreement, (ii) will be binding upon and will inure to the benefit of the parties’ successors, and (iii) will be governed by the laws of California (excluding its conflict of laws rules). In the event of a dispute, the parties consent to the exclusive jurisdiction of the state or federal courts located in San Mateo County, California or the Northern District of California. Publisher consents to such venue and jurisdiction.
+
+Publisher grants permission to Meta to collect Publisher’s personal data in the form of Publisher’s personal details (including Publisher’s name, address etc.) in connection with the Program. Publisher hereby acknowledges that Meta requires, and will process, such data as necessary pursuant to this Agreement. This may include sharing this data with Meta companies and its affiliates. Meta may store Publisher’s data until it is no longer necessary for the purposes for which it has been collected. For more information on the foregoing, including my data rights (such as requests to access, correct or object to certain processing activities) please refer to Meta’s Privacy Policy.
+
+Official notices to Meta should be sent to:
+
+Meta Platforms, Inc.
+
+1 Meta Way, Menlo Park, CA 94025
+
+BY APPLYING FOR THE META PROGRAM AND CLICKING ON THE ACCEPTANCE BUTTON YOU ARE SIGNIFYING YOUR AGREEMENT TO BE PRESENTLY BOUND BY THE TERMS OF THIS AGREEMENT TO THE SAME EXTENT AS IF YOU HAD PERSONALLY SIGNED THIS AGREEMENT.
+
+EXHIBIT “A” META ENDORSEMENT GUIDELINES Meta radically redefines digital entertainment. Immerse yourself in games or go inside your favorite movies, time travel, space travel, or hang out with friends in VR. Stay connected and feel there with high quality video chat. We’re excited to share our revolutionary tech with you and realize you may share your experience with others. If you were paid, received free or discounted products or services or other perks from Meta and you mention Meta or its products or services, please make sure you explain any such connection in your post. Some helpful tips on when, what, where and how to communicate this message are listed below. Following these guidelines will help allow readers and viewers to understand your connection to Meta. Here are suggestions on when, what, where, and how to communicate this message. When should I mention my connection with Meta? If you received free or discounted products, services or other perks, or were paid by us, and you post, re-post, or otherwise share content (e.g., via social media, blogs) that mentions Meta or its products or services. What should I say? Please feel free to use your own voice or style, and state what you received from us in a clear, up-front way. For example, “Meta paid me and sent me free RBM to review” or “Thanks Meta for giving me AI Glasses for free…” If space is an issue, you can use words such as “Paid”, “Ad,” or “Sponsored” to preface your content. Please don’t use “#sp” or “#spon,” as some people may not understand what the abbreviations mean. Where and how do I say it? In a clear and prominent way. Here are some examples. Videos & Live Conversations: Include it in written text and audio early on in the video or live conversation. For videos and conversations or streaming (e.g., Twitch or Instagram Live) more than 10 minutes long, or a series of posts (e.g., Snapchat or Instagram Stories) repeat the disclosure periodically throughout.
+Photos, Images & Graphics: Include it on the item or prominently include it in the post or Tweet near the item. Written Posts: Include it towards the beginning, above-the-fold, before a viewer has to click “read more.” (e.g., on Instagram this is within the first 3 lines). If included with other #, include the disclosure first in the string. In a manner so it travels with your content when shared. Refer to branded content tools for Facebook and Instagram on how to tag partners in your post and other information. FYI - using the platform’s tools may not be enough in order to follow these guidelines. For example, if you use Instagram’s tool that indicates a post is done with a brand partner, such indication may not show when sharing such post to Twitter and you may need to add a different disclosure using Twitter. Is there anything else that I should watch out for? Yes. Be truthful and accurate. If you don’t follow these guidelines, we may ask you to update your content or we may not be able to work with you going forward. Questions?The U.S. Federal Trade Commission regulates advertising, endorsements, and testimonials, and has provided guidance regarding disclosures in the social media context in the following publications.
+FTC’s Guides Concerning Use of Endorsements and Testimonials in Advertising: https://www.ftc.gov/sites/default/files/attachments/press-releases/ftc-publishes-final-guides-governing-endorsements-testimonials/091005revisedendorsementguides.pdf
+FTC Endorsement Guidelines FAQs: https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking</p>`]
+    ;
+
+    const root = document.documentElement;
+    const stage = document.getElementById("stage");
+    const essayLayer = document.getElementById("essayLayer");
+    const lens = document.getElementById("lens");
+    const essayInput = document.getElementById("essayInput");
+    const layerState = Array.from({ length: LAYER_COUNT }, () => true);
+
+    essayInput.value = sampleEssay;
+
+    const redInputs = Array.from({ length: LAYER_COUNT }, (_, i) => document.getElementById("redInput" + (i + 1)));
+    const policyLayers = Array.from({ length: LAYER_COUNT }, (_, i) => document.getElementById("policy" + (i + 1)));
+
+    redInputs.forEach((input, i) => input.value = sampleRed[i]);
+
+    function repeatHTML(html, count) {
+      return Array.from({ length: count }, () => `<div class="repeat-block">${html}</div>`).join("");
+    }
+
+    function applyText() {
+      essayLayer.innerHTML = essayInput.value;
+
+      const dense = document.getElementById("denseMode").checked;
+      policyLayers.forEach((layer, i) => {
+        layer.innerHTML = dense ? repeatHTML(redInputs[i].value, 18) : redInputs[i].value;
+        layer.classList.toggle("dense", dense);
+      });
+
+      requestAnimationFrame(updateStageHeight);
+    }
+
+    function updateStageHeight() {
+      let maxHeight = essayLayer.scrollHeight;
+      policyLayers.forEach(layer => {
+        if (layer.style.display !== "none") {
+          maxHeight = Math.max(maxHeight, layer.scrollHeight);
+        }
+      });
+      stage.style.minHeight = (maxHeight + 120) + "px";
+    }
+
+    function syncControls() {
+      const controls = [
+        ["lensSize", "--lens-size", "px", "lensSizeValue"],
+        ["lensOpacity", "--lens-opacity", "", "lensOpacityValue"],
+        ["essayOpacity", "--essay-opacity", "", "essayOpacityValue"],
+        ["policyOpacity", "--policy-opacity", "", "policyOpacityValue"],
+        ["essaySize", "--essay-size", "px", "essaySizeValue"],
+        ["policySize", "--policy-size", "px", "policySizeValue"]
+      ];
+
+      controls.forEach(([id, cssVar, suffix, valueId]) => {
+        const input = document.getElementById(id);
+        root.style.setProperty(cssVar, input.value + suffix);
+        document.getElementById(valueId).textContent = input.value + suffix;
+      });
+
+      lens.style.display = document.getElementById("showLens").checked ? "block" : "none";
+      syncLayers();
+      updateStageHeight();
+    }
+
+    function syncLayers() {
+      policyLayers.forEach((layer, i) => {
+        layer.style.display = layerState[i] ? "block" : "none";
+      });
+    }
+
+    function buildLayerToggles() {
+      const wrap = document.getElementById("layerToggles");
+      wrap.innerHTML = "";
+      layerState.forEach((on, i) => {
+        const row = document.createElement("div");
+        row.className = "layer-row";
+
+        const label = document.createElement("span");
+        label.textContent = layerNames[i];
+
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = on;
+        cb.addEventListener("change", () => {
+          layerState[i] = cb.checked;
+          syncLayers();
+          updateStageHeight();
+        });
+
+        row.appendChild(label);
+        row.appendChild(cb);
+        wrap.appendChild(row);
+      });
+    }
+
+    function shuffleOffsets() {
+      policyLayers.forEach(layer => {
+        const tx = Math.round(Math.random() * 52 - 26);
+        const ty = Math.round(Math.random() * 52 - 26);
+        const rot = (Math.random() * 1.6 - 0.8).toFixed(2);
+        layer.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg)`;
+      });
+      updateStageHeight();
+    }
+
+    function placeLens(clientX, clientY) {
+      lens.style.left = clientX + "px";
+      lens.style.top = clientY + "px";
+    }
+
+    document.addEventListener("mousemove", e => placeLens(e.clientX, e.clientY), { passive: true });
+    document.addEventListener("touchstart", e => {
+      if (e.touches[0]) placeLens(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+    document.addEventListener("touchmove", e => {
+      if (e.touches[0]) placeLens(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+
+    ["lensSize","lensOpacity","essayOpacity","policyOpacity","essaySize","policySize","showLens"].forEach(id => {
+      document.getElementById(id).addEventListener("input", syncControls);
+    });
+
+    document.getElementById("denseMode").addEventListener("change", applyText);
+    document.getElementById("applyAll").addEventListener("click", applyText);
+    document.getElementById("shuffle").addEventListener("click", shuffleOffsets);
+
+    document.getElementById("allOn").addEventListener("click", () => {
+      layerState.fill(true);
+      buildLayerToggles();
+      syncControls();
+    });
+
+    document.getElementById("allOff").addEventListener("click", () => {
+      layerState.fill(false);
+      buildLayerToggles();
+      syncControls();
+    });
+
+    [...redInputs, essayInput].forEach(el => {
+      el.addEventListener("input", () => {
+        applyText();
+        syncControls();
+      });
+    });
+
+    window.addEventListener("resize", updateStageHeight);
+
+    buildLayerToggles();
+    applyText();
+    syncControls();
+    placeLens(window.innerWidth * 0.42, window.innerHeight * 0.48);
+  </script>
+</body>
+</html>
